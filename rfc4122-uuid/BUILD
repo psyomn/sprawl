@@ -1,10 +1,13 @@
 cc_library(
     name = "psy-uuid",
     srcs = [
-        "uuid.cc"
+        "clock.cc",
+        "uuid.cc",
     ],
     hdrs = [
-        "uuid.h"
+        "clock.h",
+        "uuid.h",
+        "common.h",
     ],
     visibility = ["//visibility:public"]
 )
