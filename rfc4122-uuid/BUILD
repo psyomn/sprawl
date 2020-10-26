@@ -3,11 +3,13 @@ cc_library(
     srcs = [
         "clock.cc",
         "uuid.cc",
+        "mac.cc",
     ],
     hdrs = [
         "clock.h",
-        "uuid.h",
         "common.h",
+        "uuid.h",
+        "mac.h",
     ],
     visibility = ["//visibility:public"]
 )

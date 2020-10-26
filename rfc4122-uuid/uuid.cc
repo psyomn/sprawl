@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <fstream>
 #include <iomanip>
 #include <memory>
 #include <stdexcept>
@@ -122,9 +123,22 @@ namespace psy::uuid {
   }
 
   std::array<std::uint64_t, 2> Generator::GenMAC() {
-    // right now only support linux, or anything that has sysfs
-    //   /sys/class/net/wlp3s0/address
     std::uint64_t hi = 0, lo = 0;
+
+    { // mac / name
+      // TODO: move this in constructor initialization. this is a
+      //   bottleneck to perf atm
+      // std::ifstream ifile("/sys/class/net/wlp3s0/address");
+      // std::stringstream file_contents;
+      // file_contents << ifile;
+
+      // // eg: aa:aa:aa:aa:aa:aa
+      // const std::string mac_raw = file_contents.str();
+      // const std::string delim = ":";
+
+      // right now only support linux, or anything that has sysfs
+      //   eg: /sys/class/net/wlp3s0/address
+    }
 
     // TODO: this might bet better to be passed through a function for
     //   easier testing.
