@@ -1,4 +1,5 @@
 #include "uuid.h"
+#include "mac.h"
 
 #include <algorithm>
 #include <cctype>
@@ -7,6 +8,7 @@
 #include <memory>
 #include <stdexcept>
 #include <sstream>
+#include <ctime>
 
 #include <iostream> // TODO
 
@@ -122,32 +124,52 @@ namespace psy::uuid {
     return std::make_unique<UUID>(Method::nil, std::move(Nil()));
   }
 
+  static void WriteTimeLow(std::uint64_t& val, std::tm& time) {
+  }
+
+  static void WriteTimeMid(std::uint64_t& val, std::tm& time) {
+  }
+
+  static void WriteTimeHiAndVersion(std::uint64_t& val, std::tm& time, std::uint8_t version) {
+  }
+
+  static void WriteClockSeqLow(std::uint64_t& val, std::tm& time) {
+  }
+
+  static void WriteNode(std::uint64_t& val) {
+  }
+
   std::array<std::uint64_t, 2> Generator::GenMAC() {
     std::uint64_t hi = 0, lo = 0;
+
+    { // time and version writing
+      const std::uint8_t version = 3;
+      auto tval = std::tm(); // this is init material
+      auto greg_tm = strptime("1582-10-15 00:00:00",
+                              "%Y-%m-%d %H:%M:%S",
+                              &tval); // this is init material
+      std::time_t tt = std::mktime(&tval);
+
+      namespace sc = std::chrono;
+      const auto tp = sc::system_clock::from_time_t(tt);
+      const auto now = sc::system_clock::now() - tp;
+      auto nanonow = sc::duration_cast<sc::nanoseconds>(now).count() / 100;
+      std::cout << nanonow << std::endl;
+    }
 
     { // mac / name
       // TODO: move this in constructor initialization. this is a
       //   bottleneck to perf atm
-      // std::ifstream ifile("/sys/class/net/wlp3s0/address");
-      // std::stringstream file_contents;
-      // file_contents << ifile;
-
-      // // eg: aa:aa:aa:aa:aa:aa
-      // const std::string mac_raw = file_contents.str();
-      // const std::string delim = ":";
-
-      // right now only support linux, or anything that has sysfs
+      // TODO: right now only support linux, or anything that has sysfs
       //   eg: /sys/class/net/wlp3s0/address
+      // TODO: need a better picking algo for the below (pick by
+      //   looking at operate)
+      std::ifstream ifile("/sys/class/net/wlp3s0/address");
+      std::stringstream contents;
+      contents << ifile.rdbuf();
+      const std::uint64_t mac = MacStringToInt(contents.str());
     }
 
-    // TODO: this might bet better to be passed through a function for
-    //   easier testing.
-    auto now =
-      std::chrono::high_resolution_clock::now().time_since_epoch();
-    auto nanonow =
-      std::chrono::duration_cast<std::chrono::nanoseconds>(now).count();
-
-    std::cout << nanonow << std::endl;
     return {hi, lo};
   }
 
