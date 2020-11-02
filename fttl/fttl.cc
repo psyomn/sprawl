@@ -2,6 +2,7 @@
 #include <iostream>
 #include <map>
 #include <mutex>
+#include <queue>
 #include <string>
 #include <stdexcept>
 #include <thread>
@@ -38,21 +39,26 @@ public:
 
     while (true) {
       std::this_thread::sleep_for(1s);
-
       std::lock_guard<std::mutex> guard(mutex_);
+
       const auto seconds =
         sc::duration_cast<sc::seconds>(sc::system_clock::now().time_since_epoch());
       const auto ss = std::uint64_t(seconds.count());
 
-      const auto found_timestamp = files_.find(ss);
-      if (found_timestamp == files_.end()) {
-        std::cout << "[" << ss << "] " << "did not find timestamp" << std::endl;
-      } else {
-        std::cout << "found timestamp" << std::endl;
-        std::cout <<"  -- " << found_timestamp->first << std::endl;
-        std::cout <<"  -- files ";
-        for (const auto& e : found_timestamp->second) std::cout << e << " ";
-        std::cout << std::endl;
+      // NOTE: this will choke on a lot of insertions. If this was not
+      // a toy, a mechanism like timing wheels could be added
+      // here. But this is a toy.
+      auto files_iterator = files_.begin();
+      while (files_iterator != files_.end()) {
+        std::cout << files_iterator->first << " ";
+        if (ss >= files_iterator->first) {
+          std::cout << "removing " << files_iterator->first << std::endl;
+          files_iterator = files_.erase(files_iterator);
+          std::cout << "removed  " << std::endl;
+        } else {
+          ++files_iterator;
+        }
+        std::cout << "." << std::endl;
       }
     }
   }
@@ -97,7 +103,6 @@ public:
       timestamp |= std::uint64_t(buffer[cursor++]) << 48;
       timestamp |= std::uint64_t(buffer[cursor++]) << 56;
 
-      std::cout <<" trying to insert" << std::endl;
       InsertPair(timestamp, std::move(path));
     }
 
@@ -120,7 +125,9 @@ public:
   }
 
 private:
-  // todo: change to std::priority_queue
+  // maps get sorted by std::less so we can get older timestamps this
+  // way. Ideally this should be changed to something like a priority
+  // queue.
   std::map<std::uint64_t, std::vector<std::string>> files_;
   std::uint16_t port_;
   struct sockaddr_in address_;
