@@ -52,9 +52,14 @@ public:
       while (files_iterator != files_.end()) {
         std::cout << files_iterator->first << " ";
         if (ss >= files_iterator->first) {
-          std::cout << "removing " << files_iterator->first << std::endl;
-          files_iterator = files_.erase(files_iterator);
-          std::cout << "removed  " << std::endl;
+          for (auto const& filename : files_iterator->second)  {
+            std::cout << "removing " << files_iterator->first << "... ";
+            if (remove(filename.c_str()) != 0)
+              perror("remove file");
+            else
+              std::cout << "[done]" << std::endl;
+          }
+            files_iterator = files_.erase(files_iterator);
         } else {
           ++files_iterator;
         }
