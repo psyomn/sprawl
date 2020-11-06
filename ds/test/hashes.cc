@@ -58,3 +58,33 @@ TEST(hashes, loselose) {
   EXPECT_NE(result_1, 0);
   EXPECT_EQ(result_1, 15);
 }
+
+TEST(hashes, fletcher16) {
+  {
+    const auto bytes = std::vector<std::byte> { std::byte(1), std::byte(2) };
+    const auto result = psy::ds::fletcher16(bytes);
+    EXPECT_EQ(result, 0x0403);
+  }
+
+  {
+    const auto bytes = std::vector<std::byte> {
+      std::byte(10), std::byte(25), std::byte(32),
+      std::byte(99), std::byte(100), std::byte(44),
+    };
+    const auto result = psy::ds::fletcher16(bytes);
+    EXPECT_EQ(result, 0x5636);
+  }
+}
+
+TEST(hashes, fletcher32) {
+  {
+    const auto bytes = sample_bytes_1();
+    const auto result = psy::ds::fletcher32(bytes);
+    EXPECT_EQ(result, 0x23000f);
+  }
+  {
+    const auto bytes = sample_bytes_2();
+    const auto result = psy::ds::fletcher32(bytes);
+    EXPECT_EQ(result, 0x7c60341);
+  }
+}

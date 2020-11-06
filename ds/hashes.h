@@ -12,6 +12,9 @@ namespace psy::ds {
   std::uint64_t djb2(const std::vector<std::byte>& bytes) noexcept;
   std::uint64_t sdbm(const std::vector<std::byte>& bytes) noexcept;
   std::uint64_t loselose(const std::vector<std::byte>& bytes) noexcept;
+  std::uint16_t fletcher16(const std::vector<std::byte>& bytes) noexcept;
+  std::uint32_t fletcher32(const std::vector<std::byte>& bytes) noexcept;
+  std::uint64_t fletcher64(const std::vector<std::byte>& bytes) noexcept;
 }
 
 #endif /* CACOPHAGY_DS_HASHES_H_ */
