@@ -12,9 +12,7 @@ namespace psy::tinydb {
       original_statement_(statement),
       statement_type_(Type::Undefined) { Parse(); }
 
-    enum Type GetStatementType(void) const noexcept {
-      return statement_type_;
-    }
+    inline enum Type GetStatementType(void) const noexcept { return statement_type_; }
 
   private:
     std::string original_statement_;

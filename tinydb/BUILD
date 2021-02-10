@@ -2,22 +2,24 @@ cc_library(
     name = "tinydb_core",
     srcs = [
         "core.cc",
+        "statement.cc",
     ],
     hdrs = [
         "core.h",
+        "statement.h",
     ],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
     name = "tinydb_repl",
     srcs = [
         "repl.cc",
-        "statement.cc",
     ],
     hdrs = [
         "repl.h",
-        "statement.h",
     ],
+    visibility = ["//visibility:public"],
 )
 
 cc_binary(

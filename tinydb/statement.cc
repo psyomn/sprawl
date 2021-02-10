@@ -19,7 +19,8 @@ namespace psy::tinydb {
 
     // todo: might want to care about casing
     if (tokens[0] == "insert") ParseInsert(tokens);
-    if (tokens[1] == "select") ParseSelect(tokens);
+    else if (tokens[0] == "select") ParseSelect(tokens);
+    else statement_type_ = Type::Invalid;
   }
 
   void Statement::ParseInsert(const std::vector<std::string>& tokens) noexcept {
