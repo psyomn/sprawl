@@ -2,11 +2,17 @@ cc_library(
     name = "tinydb_core",
     srcs = [
         "core.cc",
+        "page.cc",
+        "schema.cc",
         "statement.cc",
+        "table.cc",
     ],
     hdrs = [
         "core.h",
+        "page.h",
+        "schema.h",
         "statement.h",
+        "table.h",
     ],
     visibility = ["//visibility:public"],
 )
