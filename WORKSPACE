@@ -4,5 +4,7 @@ new_git_repository(
   name = "googletest",
   build_file = "@//:gtest.BUILD",
   remote = "https://github.com/google/googletest",
-  tag = "release-1.8.0",
+  commit = "ec44c6c1675c25b9827aacd08c02433cccde7780",
+  shallow_since = "1468516538 -0400",
+  # tag = "release-1.8.0",
 )
