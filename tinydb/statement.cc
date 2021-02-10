@@ -3,6 +3,7 @@
 #include <sstream>
 #include <algorithm>
 #include <iterator>
+#include <iostream>
 
 namespace psy::tinydb {
   void Statement::Parse() noexcept {
@@ -29,5 +30,22 @@ namespace psy::tinydb {
 
   void Statement::ParseSelect(const std::vector<std::string>& tokens) noexcept {
     statement_type_ = Type::Select;
+  }
+
+  enum Statement::ExecutionResult Statement::Execute() noexcept {
+    switch(statement_type_) {
+    case Type::Insert:
+      std::cout << "insert stuff here" << std::endl;
+      break;
+    case Type::Select:
+      std::cout << "select stuff here" << std::endl;
+      break;
+    case Type::Undefined:
+    case Type::Invalid:
+    default:
+      return Statement::ExecutionResult::Failure;
+    }
+
+    return Statement::ExecutionResult::Failure;
   }
 }
