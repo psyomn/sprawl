@@ -12,9 +12,11 @@ cc_library(
     name = "tinydb_repl",
     srcs = [
         "repl.cc",
+        "statement.cc",
     ],
     hdrs = [
-        "repl.h"
+        "repl.h",
+        "statement.h",
     ],
 )
 
