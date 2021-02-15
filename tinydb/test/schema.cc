@@ -6,11 +6,15 @@
 TEST(schema, add_table) {
   psy::tinydb::Schema schema;
 
+  using CT = psy::tinydb::ColumnType;
+
   schema.AddTable(std::move(
     psy::tinydb::Table{
       .name_ = "person",
       .columns_ = {
-        {"id", 8}, {"name", 32}, {"email", 256},
+        {"id", 8, CT::Integer},
+        {"name", 32, CT::String},
+        {"email", 256, CT::String},
       }
     }
   ));
@@ -19,8 +23,9 @@ TEST(schema, add_table) {
     psy::tinydb::Table{
       .name_ = "monster",
       .columns_ = {
-        {"id", 8}, {"name", 32}, {"description", 256},
-        {"friendly_to_humans", 1},
+        {"id", 8, CT::Integer},
+        {"name", 32, CT::String},
+        {"description", 256, CT::String},
       }
     }
   ));

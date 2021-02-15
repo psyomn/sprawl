@@ -5,9 +5,12 @@
 #include <vector>
 
 namespace psy::tinydb {
+  enum class ColumnType { Undefined, String, Integer };
+
   struct Column {
     std::string label_;
     std::size_t size_;
+    enum ColumnType type_;
     /* TODO: attributes such as primary key, autoincrement, etc? */
   };
 

@@ -6,7 +6,7 @@
 namespace psy::tinydb {
   class Statement {
   public:
-    enum class Type { Undefined, Insert, Select, Invalid };
+    enum class Type { Undefined, Insert, Select, Create, Invalid };
     enum class ExecutionResult { Undefined, Success, Failure };
 
     explicit Statement(const std::string& statement) :

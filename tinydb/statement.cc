@@ -21,6 +21,7 @@ namespace psy::tinydb {
     // todo: might want to care about casing
     if (tokens[0] == "insert") ParseInsert(tokens);
     else if (tokens[0] == "select") ParseSelect(tokens);
+    else if (tokens[0] == "create") ParseCreate(tokens);
     else statement_type_ = Type::Invalid;
   }
 
@@ -32,6 +33,10 @@ namespace psy::tinydb {
     statement_type_ = Type::Select;
   }
 
+  void Statement::ParseCreate(const std::vector<std::string>& tokens) noexcept {
+    statement_type_ = Type::Create;
+  }
+
   enum Statement::ExecutionResult Statement::Execute() noexcept {
     switch(statement_type_) {
     case Type::Insert:
@@ -39,6 +44,9 @@ namespace psy::tinydb {
       break;
     case Type::Select:
       std::cout << "select stuff here" << std::endl;
+      break;
+    case Type::Create:
+      std::cout << "create the table here" << std::endl;
       break;
     case Type::Undefined:
     case Type::Invalid:
