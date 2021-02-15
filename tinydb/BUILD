@@ -2,6 +2,7 @@ cc_library(
     name = "tinydb_core",
     srcs = [
         "core.cc",
+        "error.cc",
         "page.cc",
         "schema.cc",
         "statement.cc",
@@ -9,6 +10,7 @@ cc_library(
     ],
     hdrs = [
         "core.h",
+        "error.h",
         "page.h",
         "schema.h",
         "statement.h",
