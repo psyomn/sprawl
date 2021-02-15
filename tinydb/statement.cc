@@ -1,9 +1,10 @@
 #include "statement.h"
 
-#include <sstream>
 #include <algorithm>
 #include <iterator>
 #include <iostream>
+#include <set>
+#include <sstream>
 
 namespace psy::tinydb {
   void Statement::Parse() noexcept {
@@ -36,6 +37,8 @@ namespace psy::tinydb {
   void Statement::ParseCreate(const std::vector<std::string>& tokens) noexcept {
     statement_type_ = Type::Create;
 
+    // validation
+
     // create table
     if (tokens.size() < 2) {
       error_ = Error{"invalid create statement: expecting at least `create table`"};
@@ -53,7 +56,7 @@ namespace psy::tinydb {
       return;
     }
 
-    auto col_count = tokens.size() - 3;
+    const auto col_count = tokens.size() - 3;
 
     if (col_count == 0) {
       error_ = Error{"must specify at least one column in the table"};
@@ -65,10 +68,24 @@ namespace psy::tinydb {
       return;
     }
 
+    { // check if duplicate column names
+      std::set<std::string> names;
+      auto it = tokens.cbegin() + 3;
+      for (; it != tokens.cend(); it += 2) {
+        if (names.find(*it) != names.end()) {
+          error_ = Error{"duplicate column names"};
+          return;
+        }
+
+        names.insert(std::string(*it));
+      }
+    }
+    // execute create
+
     std::vector<Column> columns;
     auto it = tokens.cbegin() + 3;
     for (; it != tokens.cend(); it += 2)
-      columns.push_back({.label_ = std::string(*it)});
+      columns.push_back({.label_ = *it});
 
     auto table_name = tokens[2];
 

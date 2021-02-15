@@ -41,6 +41,9 @@ TEST(statement, create_table) {
   psy::tinydb::Statement stat(create_table, s);
   EXPECT_FALSE(stat.GetState().has_value());
   EXPECT_EQ(stat.GetStatementType(), psy::tinydb::Statement::Type::Create);
+
+  const auto names = s.GetTableNames();
+  EXPECT_EQ(names, std::vector<std::string>{"people"});
 }
 
 TEST(statement, unique_columns) {
