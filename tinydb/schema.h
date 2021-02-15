@@ -1,8 +1,9 @@
 #pragma once
 
-#include <string>
 #include <cstddef>
+#include <string>
 #include <vector>
+#include <optional>
 
 namespace psy::tinydb {
   enum class ColumnType { Undefined, String, Integer };
@@ -23,6 +24,7 @@ namespace psy::tinydb {
   public:
     void AddTable(Table&& table) noexcept;
     std::vector<std::string> GetTableNames(void) const noexcept;
+    std::optional<const Table*> FindTableByName(const std::string& name) const noexcept;
   private:
     std::vector<Table> tables_;
   };
