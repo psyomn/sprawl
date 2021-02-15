@@ -35,6 +35,47 @@ namespace psy::tinydb {
 
   void Statement::ParseCreate(const std::vector<std::string>& tokens) noexcept {
     statement_type_ = Type::Create;
+
+    // create table
+    if (tokens.size() < 2) {
+      error_ = Error{"invalid create statement: expecting at least `create table`"};
+      return;
+    }
+
+    if (tokens[0] != "create" || tokens[1] != "table") {
+      error_ = Error{"queries should begin with `create table`"};
+      return;
+    }
+
+    // create table blah colname type
+    if (tokens.size() < 3) {
+      error_ = Error{"invalid create statement: expecting table name with at least a column"};
+      return;
+    }
+
+    auto col_count = tokens.size() - 3;
+
+    if (col_count == 0) {
+      error_ = Error{"must specify at least one column in the table"};
+      return;
+    }
+
+    if (col_count % 2 != 0) {
+      error_ = Error{"bad column definition"};
+      return;
+    }
+
+    std::vector<Column> columns;
+    auto it = tokens.cbegin() + 3;
+    for (; it != tokens.cend(); it += 2)
+      columns.push_back({.label_ = std::string(*it)});
+
+    auto table_name = tokens[2];
+
+    schema_.AddTable(std::move(Table{
+      .name_ = table_name,
+      .columns_ = std::move(columns),
+    }));
   }
 
   enum Statement::ExecutionResult Statement::Execute() noexcept {
@@ -55,5 +96,9 @@ namespace psy::tinydb {
     }
 
     return Statement::ExecutionResult::Failure;
+  }
+
+  const std::optional<Error> Statement::GetState() const noexcept {
+    return error_;
   }
 }
