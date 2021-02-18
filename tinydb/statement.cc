@@ -16,6 +16,7 @@ namespace psy::tinydb {
 
     if (tokens.size() < 1) {
       statement_type_ = Type::Invalid;
+      error_ = Error{"empty query"};
       return;
     }
 
@@ -23,7 +24,10 @@ namespace psy::tinydb {
     if (tokens[0] == "insert") ParseInsert(tokens);
     else if (tokens[0] == "select") ParseSelect(tokens);
     else if (tokens[0] == "create") ParseCreate(tokens);
-    else statement_type_ = Type::Invalid;
+    else {
+      statement_type_ = Type::Invalid;
+      error_ = Error{"bad starter identifier"};
+    }
   }
 
   void Statement::ParseInsert(const std::vector<std::string>& tokens) noexcept {

@@ -5,17 +5,25 @@
 
 #include <optional>
 
+const psy::tinydb::Error kDefaultError{"should have error"};
+
 TEST(statement, invalid_statements) {
   using namespace psy;
   {
     psy::tinydb::Schema s;
     auto stat = tinydb::Statement("nope nope nope", s);
     EXPECT_EQ(stat.GetStatementType(), tinydb::Statement::Type::Invalid);
+    EXPECT_TRUE(stat.GetState().has_value());
+    EXPECT_EQ(stat.GetState().value_or(kDefaultError).GetMessage(),
+              "bad starter identifier");
   }
   {
     psy::tinydb::Schema s;
     auto stat = tinydb::Statement("", s);
     EXPECT_EQ(stat.GetStatementType(), tinydb::Statement::Type::Invalid);
+    EXPECT_TRUE(stat.GetState().has_value());
+    EXPECT_EQ(stat.GetState().value_or(kDefaultError).GetMessage(),
+              "empty query");
   }
 }
 
@@ -55,7 +63,6 @@ TEST(statement, unique_columns) {
 
   EXPECT_TRUE(stat.GetState().has_value());
   EXPECT_EQ(stat.GetState()
-                .value_or(psy::tinydb::Error{"should have error"})
-                .GetMessage(),
-            "duplicate column names");
+                .value_or(kDefaultError)
+                .GetMessage(), "duplicate column names");
 }
