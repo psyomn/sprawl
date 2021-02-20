@@ -40,4 +40,5 @@ namespace psy::tinydb {
   };
 
   std::optional<std::uint64_t> ParseColumnSize(const std::string& column) noexcept;
+  std::optional<ColumnType> ParseColumnType(const std::string& column) noexcept;
 }

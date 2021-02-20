@@ -98,9 +98,16 @@ namespace psy::tinydb {
         return;
       }
 
+      auto coltype = ParseColumnType(*(it + 1));
+      if (!colsize.has_value()) {
+        error_ = Error{"invalid column type: " + *(it + 1)};
+        return;
+      }
+
       columns.push_back({
           .label_ = *it,
           .size_ = colsize.value(),
+          .type_ = coltype.value(),
       });
     }
 
@@ -147,6 +154,16 @@ namespace psy::tinydb {
 
     if (size_matches.size() >= 2)
       return std::strtoull(size_matches[1].str().c_str(), nullptr, 10);
+
+    return {};
+  }
+
+  std::optional<ColumnType> ParseColumnType(const std::string& column) noexcept {
+    const std::regex of_varint("varint");
+    const std::regex of_int("^int$");
+
+    if (std::regex_match(column, of_varint)) return ColumnType::String;
+    if (std::regex_match(column, of_int)) return ColumnType::Integer;
 
     return {};
   }

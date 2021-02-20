@@ -86,13 +86,15 @@ TEST(statement, create_table) {
 
   EXPECT_EQ(columns[0].label_, "id");
   EXPECT_EQ(columns[0].size_, 4);
-  EXPECT_EQ(columns[0].type_, psy::tinydb::ColumnType::String);
+  EXPECT_EQ(columns[0].type_, psy::tinydb::ColumnType::Integer);
 
   EXPECT_EQ(columns[1].label_, "name");
   EXPECT_EQ(columns[1].size_, 32);
+  EXPECT_EQ(columns[1].type_, psy::tinydb::ColumnType::String);
 
   EXPECT_EQ(columns[2].label_, "email");
   EXPECT_EQ(columns[2].size_, 256);
+  EXPECT_EQ(columns[2].type_, psy::tinydb::ColumnType::String);
 }
 
 TEST(statement, unique_columns) {
