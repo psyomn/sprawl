@@ -41,6 +41,32 @@ TEST(statement, insert_statement_correct_type) {
   EXPECT_EQ(stat.GetStatementType(), tinydb::Statement::Type::Insert);
 }
 
+TEST(statement, parse_column_size) {
+  { // good
+    const std::string s1 = "varchar(32)";
+    const std::string s2 = "varchar(255)";
+    const std::string s3 = "int";
+
+    auto res1 = psy::tinydb::ParseColumnSize(s1);
+    ASSERT_TRUE(res1.has_value());
+    EXPECT_EQ(res1.value(), 32);
+
+    auto res2 = psy::tinydb::ParseColumnSize(s2);
+    ASSERT_TRUE(res2.has_value());
+    EXPECT_EQ(res2.value(), 255);
+
+    auto res3 = psy::tinydb::ParseColumnSize(s3);
+    ASSERT_TRUE(res3.has_value());
+    EXPECT_EQ(res3.value(), 4);
+  }
+
+  { // bad
+    const std::string s1 = "varchar(0)";
+    const std::string s2 = "varchar()";
+    const std::string s3 = "varchar";
+  }
+}
+
 TEST(statement, create_table) {
   psy::tinydb::Schema s;
   const std::string create_table =
@@ -52,6 +78,21 @@ TEST(statement, create_table) {
 
   const auto names = s.GetTableNames();
   EXPECT_EQ(names, std::vector<std::string>{"people"});
+
+  ASSERT_TRUE(s.FindTableByName("people").has_value());
+  const auto columns = s.FindTableByName("people").value()->columns_;
+
+  EXPECT_EQ(columns.size(), 3);
+
+  EXPECT_EQ(columns[0].label_, "id");
+  EXPECT_EQ(columns[0].size_, 4);
+  EXPECT_EQ(columns[0].type_, psy::tinydb::ColumnType::String);
+
+  EXPECT_EQ(columns[1].label_, "name");
+  EXPECT_EQ(columns[1].size_, 32);
+
+  EXPECT_EQ(columns[2].label_, "email");
+  EXPECT_EQ(columns[2].size_, 256);
 }
 
 TEST(statement, unique_columns) {

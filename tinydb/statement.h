@@ -1,7 +1,8 @@
 #pragma once
 
-#include <string>
 #include <optional>
+#include <string>
+#include <cstdint>
 #include <vector>
 
 #include "error.h"
@@ -37,4 +38,6 @@ namespace psy::tinydb {
     void ParseSelect(const std::vector<std::string>& tokens) noexcept;
     void ParseCreate(const std::vector<std::string>& tokens) noexcept;
   };
+
+  std::optional<std::uint64_t> ParseColumnSize(const std::string& column) noexcept;
 }

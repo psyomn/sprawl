@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iterator>
 #include <iostream>
+#include <regex>
 #include <set>
 #include <sstream>
 
@@ -84,12 +85,24 @@ namespace psy::tinydb {
         names.insert(std::string(*it));
       }
     }
+
     // execute create
 
     std::vector<Column> columns;
     auto it = tokens.cbegin() + 3;
-    for (; it != tokens.cend(); it += 2)
-      columns.push_back({.label_ = *it});
+
+    for (; it != tokens.cend(); it += 2) {
+      auto colsize = ParseColumnSize(*(it + 1));
+      if (!colsize.has_value())  {
+        error_ = Error{"invalid size in column specification: " + *(it + 1)};
+        return;
+      }
+
+      columns.push_back({
+          .label_ = *it,
+          .size_ = colsize.value(),
+      });
+    }
 
     auto table_name = tokens[2];
 
@@ -121,5 +134,20 @@ namespace psy::tinydb {
 
   const std::optional<Error> Statement::GetState() const noexcept {
     return error_;
+  }
+
+  std::optional<std::uint64_t> ParseColumnSize(const std::string& column) noexcept {
+    if (column == "int")
+      return 4;
+
+    const std::regex get_size("\\(([0-9]+)\\)");
+    std::smatch size_matches;
+    if (!std::regex_search(column, size_matches, get_size))
+      return {};
+
+    if (size_matches.size() >= 2)
+      return std::strtoull(size_matches[1].str().c_str(), nullptr, 10);
+
+    return {};
   }
 }
