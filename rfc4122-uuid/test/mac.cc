@@ -7,7 +7,7 @@
 
 #include <cstdint>
 
-TEST(uiid, mac_generate) {
+TEST(uiid, DISABLED_mac_generate) {
   using namespace psy;
   auto generator = uuid::Generator();
   auto uuid = generator.Generate(uuid::Method::name);
