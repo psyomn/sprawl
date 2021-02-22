@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
+#include "tinydb/schema.h"
 #include "tinydb/statement.h"
 
 #include <optional>
@@ -65,14 +66,35 @@ TEST(statement, parse_column_size) {
     const std::string s2 = "varchar()";
     const std::string s3 = "varchar";
 
-    auto res1 = psy::tinydb::ParseColumnSize(s1);
+    const auto res1 = psy::tinydb::ParseColumnSize(s1);
     ASSERT_FALSE(res1.has_value());
 
-    auto res2 = psy::tinydb::ParseColumnSize(s2);
+    const auto res2 = psy::tinydb::ParseColumnSize(s2);
     ASSERT_FALSE(res2.has_value());
 
-    auto res3 = psy::tinydb::ParseColumnSize(s3);
+    const auto res3 = psy::tinydb::ParseColumnSize(s3);
     ASSERT_FALSE(res3.has_value());
+  }
+}
+
+TEST(statement, parse_column_type) {
+  {
+    const std::string s1 = "int";
+    const auto res1 = psy::tinydb::ParseColumnType(s1);
+    ASSERT_EQ(res1.value(), psy::tinydb::ColumnType::Integer);
+
+    const std::string s2 = "varchar(32)";
+    const auto res2 = psy::tinydb::ParseColumnType(s2);
+    ASSERT_EQ(res2.value(), psy::tinydb::ColumnType::String);
+  }
+  {
+    const std::string s1 = "nope";
+    const auto res1 = psy::tinydb::ParseColumnType(s1);
+    ASSERT_FALSE(res1.has_value());
+
+    const std::string s2 = "nope(32)";
+    const auto res2 = psy::tinydb::ParseColumnType(s2);
+    ASSERT_FALSE(res2.has_value());
   }
 }
 
