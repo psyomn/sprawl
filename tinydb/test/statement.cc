@@ -12,7 +12,7 @@ TEST(statement, invalid_statements) {
   using namespace psy;
   {
     psy::tinydb::Schema s;
-    auto stat = tinydb::Statement("nope nope nope", s);
+    const auto stat = tinydb::Statement("nope nope nope", s);
     EXPECT_EQ(stat.GetStatementType(), tinydb::Statement::Type::Invalid);
     EXPECT_TRUE(stat.GetState().has_value());
     EXPECT_EQ(stat.GetState().value_or(kDefaultError).GetMessage(),
@@ -20,7 +20,7 @@ TEST(statement, invalid_statements) {
   }
   {
     psy::tinydb::Schema s;
-    auto stat = tinydb::Statement("", s);
+    const auto stat = tinydb::Statement("", s);
     EXPECT_EQ(stat.GetStatementType(), tinydb::Statement::Type::Invalid);
     EXPECT_TRUE(stat.GetState().has_value());
     EXPECT_EQ(stat.GetState().value_or(kDefaultError).GetMessage(),
@@ -31,14 +31,14 @@ TEST(statement, invalid_statements) {
 TEST(statement, select_statement_correct_type) {
   psy::tinydb::Schema s;
   using namespace psy;
-  auto stat = tinydb::Statement("select * from test_table", s);
+  const auto stat = tinydb::Statement("select * from test_table", s);
   EXPECT_EQ(stat.GetStatementType(), tinydb::Statement::Type::Select);
 }
 
 TEST(statement, insert_statement_correct_type) {
   psy::tinydb::Schema s;
   using namespace psy;
-  auto stat = tinydb::Statement("insert into test_table col1 col2 col3 values 1 2 3", s);
+  const auto stat = tinydb::Statement("insert into test_table col1 col2 col3 values 1 2 3", s);
   EXPECT_EQ(stat.GetStatementType(), tinydb::Statement::Type::Insert);
 }
 
@@ -48,15 +48,15 @@ TEST(statement, parse_column_size) {
     const std::string s2 = "varchar(255)";
     const std::string s3 = "int";
 
-    auto res1 = psy::tinydb::ParseColumnSize(s1);
+    const auto res1 = psy::tinydb::ParseColumnSize(s1);
     ASSERT_TRUE(res1.has_value());
     EXPECT_EQ(res1.value(), 32);
 
-    auto res2 = psy::tinydb::ParseColumnSize(s2);
+    const auto res2 = psy::tinydb::ParseColumnSize(s2);
     ASSERT_TRUE(res2.has_value());
     EXPECT_EQ(res2.value(), 255);
 
-    auto res3 = psy::tinydb::ParseColumnSize(s3);
+    const auto res3 = psy::tinydb::ParseColumnSize(s3);
     ASSERT_TRUE(res3.has_value());
     EXPECT_EQ(res3.value(), 4);
   }
