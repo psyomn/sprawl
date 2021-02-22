@@ -64,6 +64,15 @@ TEST(statement, parse_column_size) {
     const std::string s1 = "varchar(0)";
     const std::string s2 = "varchar()";
     const std::string s3 = "varchar";
+
+    auto res1 = psy::tinydb::ParseColumnSize(s1);
+    ASSERT_FALSE(res1.has_value());
+
+    auto res2 = psy::tinydb::ParseColumnSize(s2);
+    ASSERT_FALSE(res2.has_value());
+
+    auto res3 = psy::tinydb::ParseColumnSize(s3);
+    ASSERT_FALSE(res3.has_value());
   }
 }
 

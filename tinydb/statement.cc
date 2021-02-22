@@ -104,6 +104,9 @@ namespace psy::tinydb {
         return;
       }
 
+      std::cout << *it << " " << *(it + 1) << std::endl;
+      std::cout << "has value: " << coltype.has_value() << std::endl;
+
       columns.push_back({
           .label_ = *it,
           .size_ = colsize.value(),
@@ -152,17 +155,21 @@ namespace psy::tinydb {
     if (!std::regex_search(column, size_matches, get_size))
       return {};
 
-    if (size_matches.size() >= 2)
-      return std::strtoull(size_matches[1].str().c_str(), nullptr, 10);
+    if (size_matches.size() <= 1)
+      return {};
+
+    auto val = std::strtoull(size_matches[1].str().c_str(), nullptr, 10);
+    if (val != 0)
+      return val;
 
     return {};
   }
 
   std::optional<ColumnType> ParseColumnType(const std::string& column) noexcept {
-    const std::regex of_varint("varint");
+    const std::regex of_varchar("^varchar\\([0-9]+\\)$");
     const std::regex of_int("^int$");
 
-    if (std::regex_match(column, of_varint)) return ColumnType::String;
+    if (std::regex_match(column, of_varchar)) return ColumnType::String;
     if (std::regex_match(column, of_int)) return ColumnType::Integer;
 
     return {};
