@@ -140,3 +140,31 @@ TEST(statement, unique_columns) {
                 .value_or(kDefaultError)
                 .GetMessage(), "duplicate column names");
 }
+
+TEST(statement, parse_bad_select_statement) {
+  psy::tinydb::Schema s;
+  const auto stat1 = psy::tinydb::Statement("select *", s);
+  const auto stat2 = psy::tinydb::Statement("select * from", s);
+
+  ASSERT_EQ(stat1.GetState()
+            .value_or(kDefaultError)
+            .GetMessage(), "invalid select statement: expecting at least 4 parts");
+
+  ASSERT_EQ(stat2.GetState()
+            .value_or(kDefaultError)
+            .GetMessage(), "invalid select statement: expecting at least 4 parts");
+}
+
+TEST(statement, parse_select_wildcard) {
+  psy::tinydb::Schema s;
+  const auto stat = psy::tinydb::Statement("select * from people", s);
+
+  EXPECT_EQ(stat.GetStatementType(),
+            psy::tinydb::Statement::Type::Select);
+}
+
+TEST(statement, parse_select_names) {
+  psy::tinydb::Schema s;
+  const auto stat = psy::tinydb::Statement("select name email from people", s);
+  EXPECT_EQ(stat.GetStatementType(), psy::tinydb::Statement::Type::Select);
+}

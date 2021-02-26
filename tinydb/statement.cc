@@ -37,6 +37,21 @@ namespace psy::tinydb {
 
   void Statement::ParseSelect(const std::vector<std::string>& tokens) noexcept {
     statement_type_ = Type::Select;
+
+    if (tokens.size() < 4) {
+      error_ = Error{"invalid select statement: expecting at least 4 parts"};
+      return;
+    }
+
+    std::vector<std::string> labels;
+    auto it = tokens.cbegin();
+    ++it; // ignore "select"
+
+    const bool is_wildcard = (*it) == "*";
+    if (is_wildcard) {
+      const std::string table_name = *(it + 2);
+      schema_.FindTableByName(table_name);
+    }
   }
 
   void Statement::ParseCreate(const std::vector<std::string>& tokens) noexcept {
