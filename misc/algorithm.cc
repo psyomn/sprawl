@@ -8,7 +8,9 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <set>
 #include <string>
+#include <map>
 #include <vector>
 
 /** test objects */
@@ -79,4 +81,40 @@ TEST(algorithm, vector_find_if_object) {
                    [](const Person& p) { return p.GetAge() % 2 == 0; });
     EXPECT_EQ(count, 4);
   }
+}
+
+TEST(algorithm, set_find_if) {
+  std::set<std::uint8_t> s;
+  s.insert(1);
+  s.insert(2);
+  s.insert(7);
+  s.insert(9);
+
+  // nb: use the member functions of set, unless you need something
+  // like this.
+  const auto it =
+    std::find_if(s.cbegin(), s.cend(),
+                 [](const std::uint8_t& v) { return v == 7; });
+
+  EXPECT_TRUE(it != s.cend());
+  EXPECT_EQ(*it, *s.find(7));
+}
+
+TEST(algorithm, map_find_if) {
+  std::map<std::string, int> m = {
+    {"bob", 1},
+    {"jane", 20},
+    {"chris", 4},
+    {"mark", 1000},
+  };
+
+  // nb: mostly for fun and profit, probably don't use find_if
+  const auto it =
+    std::find_if(m.cbegin(), m.cend(),
+                 [](const std::pair<std::string, int>& v){
+                   return v.first == "mark";
+                 });
+
+  EXPECT_EQ(it->first, "mark");
+  EXPECT_EQ(it->second, 1000);
 }
