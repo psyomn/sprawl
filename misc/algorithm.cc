@@ -11,6 +11,7 @@
 #include <set>
 #include <string>
 #include <map>
+#include <random>
 #include <vector>
 
 /** test objects */
@@ -186,4 +187,26 @@ TEST(algorithm, replace_if) {
                   [](const std::uint32_t& val) { return val == 1; }, 0);
 
   EXPECT_EQ(v, std::vector<std::uint32_t>({0, 0, 0, 0, 8, 8, 8, 0, 0}));
+}
+
+TEST(algorithm, shuffle) {
+  std::vector<std::uint32_t> v(100);
+  std::generate_n(v.begin(), v.size(),
+                  [](){
+                    // nb: not mt safe, so don't do this at home kids!
+                    static std::uint32_t count = 0;
+                    return ++count;
+                  });
+
+  EXPECT_EQ(v[0], 1);
+  EXPECT_EQ(v[99], 100);
+  EXPECT_EQ(v[49], 50);
+
+  const auto copy_v = std::vector<std::uint32_t>(v);
+
+  std::shuffle(v.begin(), v.end(),
+               std::default_random_engine(1337));
+
+  EXPECT_EQ(v[0], 28);
+  EXPECT_EQ(v[99], 12);
 }
