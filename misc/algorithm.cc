@@ -118,3 +118,63 @@ TEST(algorithm, map_find_if) {
   EXPECT_EQ(it->first, "mark");
   EXPECT_EQ(it->second, 1000);
 }
+
+TEST(algorithm, any_of_vector) {
+  {
+    const bool check_one =
+      std::any_of(kStrVec.cbegin(), kStrVec.cend(),
+                  [](const std::string& s) { return s == "one"; });
+    EXPECT_TRUE(check_one);
+  }
+
+  {
+    const bool check_none =
+      std::any_of(kStrVec.cbegin(), kStrVec.cend(),
+                  [](const std::string& s) { return s == "none"; });
+    EXPECT_FALSE(check_none);
+  }
+}
+
+TEST(algorithm, none_of_vector) {
+  const bool check =
+    std::none_of(kStrVec.cbegin(), kStrVec.cend(),
+                 [](const decltype(kStrVec[0])& s) { return s == "none"; });
+  EXPECT_TRUE(check);
+}
+
+TEST(algorithm, foreach) {
+  { // lambdas
+    std::vector<std::uint32_t> v = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    std::for_each(v.begin(), v.end(), [](std::uint32_t& val) { val++; });
+    EXPECT_EQ(v, std::vector<std::uint32_t>({2, 3, 4, 5, 6, 7, 8, 9, 10}));
+  }
+
+  { // with functor object
+    std::vector<std::uint32_t> v = { 1, 2, 3, 4 };
+    class functor {
+    public:
+      void operator() (decltype(v[0])& val) { ++val; }
+    } my_functor;
+
+    std::for_each(v.begin(), v.end(), my_functor);
+  }
+}
+
+TEST(algorithm, unique) {
+  std::vector<std::uint32_t> v = {
+    1, 1, 1, 1, 1, 1,
+    2, 2, 2, 2, 2, 2,
+    3, 3, 3, 3, 3, 3,
+    4, 4, 4, 4, 4, 4,
+  };
+
+  std::vector<std::uint32_t>::iterator
+    it = std::unique(v.begin(), v.end(),
+                     [](decltype(v[0])& i,decltype(v[0])& j)
+                     { return i == j; });
+
+  auto new_size = decltype(v)::size_type(std::distance(v.begin(), it));
+  if (new_size > 0) v.resize(new_size);
+
+  EXPECT_EQ(v.size(), 4);
+}
