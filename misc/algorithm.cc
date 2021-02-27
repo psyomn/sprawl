@@ -178,3 +178,12 @@ TEST(algorithm, unique) {
 
   EXPECT_EQ(v.size(), 4);
 }
+
+TEST(algorithm, replace_if) {
+  std::vector<std::uint32_t> v = { 1, 1, 1, 1, 8, 8, 8, 1, 1 };
+
+  std::replace_if(v.begin(), v.end(),
+                  [](const std::uint32_t& val) { return val == 1; }, 0);
+
+  EXPECT_EQ(v, std::vector<std::uint32_t>({0, 0, 0, 0, 8, 8, 8, 0, 0}));
+}
