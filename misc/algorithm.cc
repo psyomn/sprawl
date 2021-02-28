@@ -210,3 +210,47 @@ TEST(algorithm, shuffle) {
   EXPECT_EQ(v[0], 28);
   EXPECT_EQ(v[99], 12);
 }
+
+TEST(algorithm, partition) {
+  std::vector<std::string> og = {
+    "banana", "anana", "pineapple",
+    "laughlin", "derp souls", "hello",
+    "tanzania", "yamaha", "patagonia",
+    "something", "somethingelse", "definitelynot",
+    "panama", "maintainable", "kampala",
+    "blargh", "blorgh", "fizzbuzz",
+    "disadvantage", "barbara", "arkansas",
+  };
+
+  auto match_fn = [](const std::string& s) {
+    return std::count(s.cbegin(), s.cend(), 'a') >= 3;
+  };
+
+  auto num_matching = size_t(std::count_if(og.begin(), og.end(), match_fn));
+
+  std::vector<std::string> pass;
+  std::vector<std::string> fail;
+  pass.resize(num_matching);
+  fail.resize(og.size() - num_matching);
+
+  std::partition_copy(og.begin(), og.end(),
+                      pass.begin(),
+                      fail.begin(),
+                      match_fn);
+
+  EXPECT_EQ(pass.size(), 11);
+  EXPECT_EQ(fail.size(), 10);
+
+  const std::vector<std::string> expected_pass = {
+    "banana", "anana", "tanzania", "yamaha", "patagonia", "panama",
+    "maintainable", "kampala", "disadvantage", "barbara", "arkansas",
+  };
+
+  const std::vector<std::string> expected_fail = {
+    "pineapple", "laughlin", "derp souls", "hello", "something",
+    "somethingelse", "definitelynot", "blargh", "blorgh", "fizzbuzz",
+  };
+
+  EXPECT_EQ(pass, expected_pass);
+  EXPECT_EQ(fail, expected_fail);
+}
