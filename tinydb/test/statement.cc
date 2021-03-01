@@ -146,11 +146,11 @@ TEST(statement, parse_bad_select_statement) {
   const auto stat1 = psy::tinydb::Statement("select *", s);
   const auto stat2 = psy::tinydb::Statement("select * from", s);
 
-  ASSERT_EQ(stat1.GetState()
+  EXPECT_EQ(stat1.GetState()
             .value_or(kDefaultError)
             .GetMessage(), "invalid select statement: expecting at least 4 parts");
 
-  ASSERT_EQ(stat2.GetState()
+  EXPECT_EQ(stat2.GetState()
             .value_or(kDefaultError)
             .GetMessage(), "invalid select statement: expecting at least 4 parts");
 }
@@ -159,12 +159,20 @@ TEST(statement, parse_select_wildcard) {
   psy::tinydb::Schema s;
   const auto stat = psy::tinydb::Statement("select * from people", s);
 
-  EXPECT_EQ(stat.GetStatementType(),
-            psy::tinydb::Statement::Type::Select);
+  EXPECT_EQ(stat.GetStatementType(), psy::tinydb::Statement::Type::Select);
+  EXPECT_EQ(stat.HasWildcardValues(), true);
 }
 
 TEST(statement, parse_select_names) {
   psy::tinydb::Schema s;
-  const auto stat = psy::tinydb::Statement("select name email from people", s);
-  EXPECT_EQ(stat.GetStatementType(), psy::tinydb::Statement::Type::Select);
+  const auto select_stat =
+    psy::tinydb::Statement("select name email from people", s);
+
+  EXPECT_EQ(select_stat.GetStatementType(), psy::tinydb::Statement::Type::Select);
+
+  const std::vector<std::string> expected_values = { "name", "email" };
+  EXPECT_EQ(select_stat.GetValues(), expected_values);
+
+  ASSERT_TRUE(select_stat.GetTableName().has_value());
+  EXPECT_EQ(select_stat.GetTableName().value(), "people");
 }

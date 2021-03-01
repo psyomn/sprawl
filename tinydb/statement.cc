@@ -47,11 +47,16 @@ namespace psy::tinydb {
     auto it = tokens.cbegin();
     ++it; // ignore "select"
 
-    const bool is_wildcard = (*it) == "*";
-    if (is_wildcard) {
-      const std::string table_name = *(it + 2);
-      schema_.FindTableByName(table_name);
+    wildcard_values_ = (*it) == "*";
+    if (!wildcard_values_) {
+      while (*it != "from") {
+        values_.push_back(*it);
+        ++it;
+      }
     }
+
+    ++it; // ignore "from"
+    table_name_ = *it;
   }
 
   void Statement::ParseCreate(const std::vector<std::string>& tokens) noexcept {
@@ -118,9 +123,6 @@ namespace psy::tinydb {
         error_ = Error{"invalid column type: " + *(it + 1)};
         return;
       }
-
-      std::cout << *it << " " << *(it + 1) << std::endl;
-      std::cout << "has value: " << coltype.has_value() << std::endl;
 
       columns.push_back({
           .label_ = *it,
