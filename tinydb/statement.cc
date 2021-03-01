@@ -33,6 +33,7 @@ namespace psy::tinydb {
 
   void Statement::ParseInsert(const std::vector<std::string>& tokens) noexcept {
     statement_type_ = Type::Insert;
+    (void) tokens; // TODO
   }
 
   void Statement::ParseSelect(const std::vector<std::string>& tokens) noexcept {
