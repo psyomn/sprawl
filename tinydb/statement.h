@@ -28,9 +28,9 @@ namespace psy::tinydb {
     inline enum Type GetStatementType(void) const noexcept { return statement_type_; }
     enum ExecutionResult Execute() noexcept;
     const std::optional<Error> GetState() const noexcept;
-    bool HasWildcardValues() const { return wildcard_values_; }
-    const std::vector<std::string>& GetValues() const { return values_; }
-    const std::optional<std::string>& GetTableName() const { return table_name_; }
+    bool HasWildcardValues() const noexcept { return wildcard_values_; }
+    const std::vector<std::string>& GetValues() const noexcept { return values_; }
+    const std::optional<std::string>& GetTableName() const noexcept { return table_name_; }
 
   private:
     std::string original_statement_;
