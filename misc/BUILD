@@ -5,3 +5,10 @@ cc_test(
          "@googletest//:gtest_main"
     ]
 )
+
+cc_binary(
+    # dwm window status updater
+    name = "dsu",
+    srcs = ["dsu.c"],
+    linkopts = ["-lX11"]
+)
