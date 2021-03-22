@@ -1,6 +1,6 @@
 cc_library(
     name = "psyds",
-    srcs = ["hashes.cc"],
-    hdrs = ["hashes.h"],
+    hdrs = ["hashes.h", "md5.h"],
+    srcs = ["hashes.cc", "md5.cc"],
     visibility = ["//visibility:public"],
 )
