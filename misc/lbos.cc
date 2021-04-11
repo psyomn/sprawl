@@ -1,3 +1,7 @@
+/* This is me writing code to accompany my reading of the little book
+ * of semaphores. The book is free and very good. Read it.
+ */
+
 #include <chrono>
 #include <iostream>
 #include <mutex>
@@ -57,21 +61,67 @@ namespace section_1_5_2 {
   }
 }
 
+namespace section_3_3 {
+  class Semaphore {
+  public:
+    explicit Semaphore(std::int64_t s) : value(s) {}
+
+    void signal(void) {
+      value.fetch_add(1, std::memory_order_relaxed);
+    }
+
+    void wait(void) const {
+      // block until we get signaled. yield for semi spinlock
+      while (value.load() <= 0) std::this_thread::yield();
+    }
+
+  private:
+    std::atomic<int64_t> value;
+  };
+
+  void rendez_vous(void);
+
+  void rendez_vous(void) {
+    Semaphore sa(0), sb(0);
+
+    std::thread ta([&sa, &sb](){
+      std::cout << "thread a, statement 1" << std::endl;
+      sb.signal();
+      sa.wait();
+      std::cout << "thread a, statement 2" << std::endl;
+    });
+
+    std::thread tb([&sa, &sb](){
+      std::cout << "thread b, statement 1" << std::endl;
+      sb.wait();
+      sa.signal();
+      std::cout << "thread b, statement 2" << std::endl;
+    });
+
+    ta.join();
+    tb.join();
+  }
+}
+
 int main(int argc, char *argv[])
 {
   int opt;
 
-  while ((opt = getopt(argc, argv, "a")) != -1) {
+  while ((opt = getopt(argc, argv, "ab")) != -1) {
     switch (opt) {
     case 'a':
       section_1_5_2::counters_atomic();
       section_1_5_2::counters_mutex();
       break;
+    case 'b':
+      section_3_3::rendez_vous();
+      break;
     default: /* '?' */
       fprintf(stderr,
-              "Usage: %s <-a> \n"
-              "  -a run first example \n",
-              argv[0]);
+              "Usage: %s <-ab> \n"
+              "  -a run section 1.5.x examples \n"
+              "  -b run section 3.3.x rendez vous examples\n"
+              , argv[0]);
 
       exit(EXIT_FAILURE);
     }
