@@ -2,6 +2,7 @@
  * of semaphores. The book is free and very good. Read it.
  */
 
+#include <atomic>
 #include <chrono>
 #include <iostream>
 #include <mutex>

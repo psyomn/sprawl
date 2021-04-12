@@ -1,6 +1,6 @@
 cc_test(
     name = "misc_test",
-    srcs = glob(["**/*.cc"]),
+    srcs = ["algorithm.cc"],
     deps = [
          "@googletest//:gtest_main"
     ]
@@ -14,10 +14,8 @@ cc_binary(
 )
 
 cc_binary(
-    # udp client that I always need handy and never
-    # have one around...
     name = "psy-udp",
-    srcs = ["udp.c"],
+    srcs = ["udp.cc"],
 )
 
 cc_binary(

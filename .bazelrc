@@ -1,4 +1,4 @@
-build --cxxopt='-std=c++20'
+build --cxxopt='-std=c++2a'
 build --cxxopt='-Wall'
 build --cxxopt='-pedantic'
 build --cxxopt='-Wextra'
