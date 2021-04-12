@@ -94,7 +94,7 @@ void receive_and_print(const struct session& sess) noexcept {
     return;
   }
 
-  const size_t safe_ret = static_cast<size_t>(ret) - 1;
+  const size_t safe_ret = static_cast<size_t>(ret);
   std::cout << "received " << ret << "bytes" << std::endl;
   const std::string ret_string(buffer, safe_ret);
   std::cout << ret_string << std::endl;
