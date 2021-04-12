@@ -3,19 +3,16 @@
 #include <sstream>
 #include <string>
 
-// C
 #include <getopt.h>
 #include <stdio.h>
 #include <unistd.h>
 
-// socket
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/udp.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-
 
 // declarations
 
@@ -46,12 +43,13 @@ struct session {
   }
 };
 
-void send_message_to(const struct session& sess);
-void receive_and_print(const struct session& sess);
+void send_message_to(const struct session& sess) noexcept;
+void receive_and_print(const struct session& sess) noexcept;
+void print_usage(const char * const name) noexcept;
 
 // implementation
 
-void send_message_to(const struct session& sess) {
+void send_message_to(const struct session& sess) noexcept {
   std::cout << "sending message[" << sess.message << "] to "
             << sess.host << ":"
             << sess.port << std::endl;
@@ -80,7 +78,7 @@ void send_message_to(const struct session& sess) {
     std::cout << "sent number of bytes: " << ret << std::endl;
 }
 
-void receive_and_print(const struct session& sess) {
+void receive_and_print(const struct session& sess) noexcept {
   std::cout << "waiting for a reply... " << std::endl;
   char buffer[508] = {0}; // max unfragmented
 
@@ -102,6 +100,10 @@ void receive_and_print(const struct session& sess) {
   std::cout << ret_string << std::endl;
 }
 
+void print_usage(const char * const name) noexcept {
+  fprintf(stderr, "Usage: %s <-s message> [-r receive] [-h host default=127.0.0.1] [-p port default=9090]\n", name);
+}
+
 int main(int argc, char* argv[]) {
   struct session sess;
   int opt = 0;
@@ -121,9 +123,14 @@ int main(int argc, char* argv[]) {
       sess.wait_for_reply = true;
       break;
     default: /* '?' */
-      fprintf(stderr, "Usage: %s <-s message> [-r receive] [-h host default=127.0.0.1] [-p port default=9090]\n", argv[0]);
+      print_usage(argv[0]);
       exit(EXIT_FAILURE);
     }
+  }
+
+  if (argc <= 1) {
+    print_usage(argv[0]);
+    return EXIT_SUCCESS;
   }
 
   sess.make();
