@@ -24,3 +24,9 @@ cc_binary(
     srcs = ["lbos.cc"],
     linkopts = ["-lpthread"],
 )
+
+cc_binary(
+    name = "multi-vector",
+    srcs = ["multi-vector.cc"],
+    linkopts = ["-pthread"],
+)
