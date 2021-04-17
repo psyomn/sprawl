@@ -15,7 +15,7 @@
 class Semaphore {
 public:
   explicit Semaphore(std::int64_t s) : value_(s) {}
-  Semaphore(std::int64_t s, std::int64_t m) : value_(s), max(m) {}
+  Semaphore(std::int64_t s, std::int64_t m) : value_(s), max_(m) {}
 
   Semaphore(const Semaphore& other) = delete;
   Semaphore(Semaphore&& other) = delete;

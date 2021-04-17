@@ -1,8 +1,8 @@
 // TODO: redo with fork example
 //
-// Basically, wanted to dmake a very simple example, remind myself of
+// Basically, wanted to make a very simple example, remind myself of
 // what tends to be annoying when doing multicore programming, and
-// what patterns can benefit us a little more.
+// what patterns can benefit me a little more.
 //
 #include <cstdint>
 #include <iostream>
@@ -14,6 +14,8 @@
 
 // C - getopt
 #include <unistd.h>
+
+#include "common/granulator.h"
 
 template <typename T>
 class MTVector {
@@ -37,60 +39,6 @@ public:
 private:
   std::vector<T> items_;
   std::mutex mut_;
-};
-
-/**
- * a glorified calculator
- *
- * should take a number of elements and suggest best partitioning
- * between threads
- *
- * TODO: this might be useful enough to factor out on some common
- *   module
- */
-class Granulator {
-public:
-  explicit Granulator(size_t num_elements) :
-    threshold_(128),
-    num_elements_(num_elements),
-    num_threads_(std::thread::hardware_concurrency()),
-    grain_(num_elements_ / num_threads_),
-    step_(0)
-  {
-    if (num_elements_ <= num_threads_ * threshold_) {
-      // to trigger a sane work sharing environment, we'll make sure
-      // that each thread has at least "threshold_" elements to deal
-      // with
-      num_threads_ = 1;
-      grain_ = num_elements_;
-    }
-  }
-
-  inline size_t GetNumThreads() const noexcept { return num_threads_; }
-  inline size_t GetGrain() const noexcept { return grain_; }
-  inline void ResetSteps(void) { step_ = 0; }
-
-  // this returns _inclusive_ ranges, so your loops must be from
-  std::pair<size_t, size_t> Step() {
-    const size_t from = step_ * grain_;
-    size_t to = (step_ + 1) * grain_ - 1;
-
-    if (to + threshold_ >= num_elements_)
-      to = num_elements_ - 1;
-
-    auto pair = std::make_pair(from, to);
-
-    ++step_;
-
-    return pair;
-  }
-
-private:
-  size_t threshold_;
-  size_t num_elements_;
-  size_t num_threads_;
-  size_t grain_;
-  size_t step_;
 };
 
 int main(int argc, char *argv[]) {
@@ -124,7 +72,7 @@ int main(int argc, char *argv[]) {
                   [&counter](){ return counter++; });
   }
 
-  auto suggestion = Granulator(max_number);
+  auto suggestion = psy::common::Granulator(max_number);
   std::cout << "number of items in vector: " << numbers.size() << std::endl;
   std::cout << "number of cores: " << suggestion.GetNumThreads() << std::endl;
   std::cout << "grain size     : " << suggestion.GetGrain() << std::endl;

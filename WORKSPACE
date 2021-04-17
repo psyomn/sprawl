@@ -8,3 +8,13 @@ new_git_repository(
   shallow_since = "1468516538 -0400",
   # tag = "release-1.8.0",
 )
+
+new_git_repository(
+  name = "pngpp",
+  # todo -- maybe rename gtest.BUILd to something else
+  build_file = "@//:gtest.BUILD",
+  remote = "https://github.com/sampotter/pngpp",
+  commit = "37911052319bb68e5971b08c951ae5ef96ae245c",
+  # shallow_since = "1468516538 -0400",
+  # tag = "release-1.8.0",
+)

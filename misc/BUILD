@@ -29,4 +29,16 @@ cc_binary(
     name = "multi-vector",
     srcs = ["multi-vector.cc"],
     linkopts = ["-pthread"],
+    deps = [
+        "//common:psycommon"
+    ]
+)
+
+cc_binary(
+    name = "png-example",
+    srcs = ["png-example.cc"],
+    linkopts = ["-lpng"],
+    deps = [
+        "@pngpp//:pngpp"
+    ],
 )
