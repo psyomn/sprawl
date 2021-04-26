@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
   }
 
   struct stat st = {0};
-  int fd = open(sess.filename_.c_str(), S_IRUSR | S_IWUSR);
+  int fd = open(sess.filename_.c_str(), O_RDWR, S_IRUSR | S_IWUSR);
 
   if (fd == -1) {
     perror("file");
@@ -53,22 +53,21 @@ int main(int argc, char *argv[]) {
   uint8_t *curr = NULL;
 
   curr = reinterpret_cast<uint8_t*>
-    (
-     mmap(NULL,
+    (mmap(NULL,
           file_size,
           PROT_READ | PROT_WRITE,
           MAP_PRIVATE,
           fd,
-          0)
-     );
+          0));
 
 
   std::cout << "file size: " << file_size << std::endl;
   for (size_t i = 0; i < file_size; ++i)
     std::cout << std::hex << int(curr[i]) << std::dec << ", ";
+
   std::cout << std::endl;
 
-  if (!munmap(curr, file_size)) perror("munmap");
+  if (munmap(curr, file_size) == -1) perror("munmap");
 
   close(fd);
   return 0;
