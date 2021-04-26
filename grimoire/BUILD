@@ -12,3 +12,12 @@ cc_binary(
     name = "mmap-example",
     srcs = ["mmap.cc"],
 )
+
+cc_binary(
+    name = "shm-example",
+    srcs = ["shm.c"],
+    linkopts = [
+        "-lrt",
+        "-lpthread",
+    ],
+)
