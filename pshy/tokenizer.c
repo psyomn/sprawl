@@ -14,8 +14,8 @@
    limitations under the License.
 */
 #include "tokenizer.h"
-#include "string.h"
 
+#include <string.h>
 #include <stdlib.h>
 
 struct pshy_tokens {
@@ -27,6 +27,13 @@ void add_item(struct pshy_tokens *toks, char *word) {
   toks->len += 1;
   toks->tokens = realloc(toks->tokens, sizeof(toks->tokens[0]) * toks->len);
   toks->tokens[toks->len-1] = word;
+}
+
+enum token_builtin pshy_tokens_builtin(const struct pshy_tokens* const toks) {
+  if (toks->len == 0) return TOKEN_NOT_BUILTIN;
+  if (strncmp(toks->tokens[0], "exit", 4) == 0) return TOKEN_BUILTIN_EXIT;
+  if (strncmp(toks->tokens[0], "cd", 2) == 0) return TOKEN_BUILTIN_CD;
+  return TOKEN_NOT_BUILTIN;
 }
 
 struct pshy_tokens* pshy_tokens_from_buff(const struct pshy_buff *const buff) {

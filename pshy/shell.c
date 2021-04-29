@@ -24,7 +24,8 @@
 #include <sys/wait.h>
 
 void pshy_shell() {
-  while (true) {
+  bool is_done = false;
+  while (!is_done) {
     struct pshy_buff *buff = pshy_buff_create();
 
     printf("ψ ");
@@ -38,11 +39,34 @@ void pshy_shell() {
       pshy_buff_add(buff, rc);
     }
 
+    if (pshy_buff_len(buff) == 0) goto cleanup_buff;
+
     struct pshy_tokens *toks = pshy_tokens_from_buff(buff);
     const char **tokens = pshy_tokens_get(toks);
 
-    pid_t pid = 0, wpid;
-    pid = fork();
+    switch (pshy_tokens_builtin(toks)) {
+    case TOKEN_BUILTIN_EXIT:
+      is_done = true;
+      goto cleanup_tokens;
+    case TOKEN_BUILTIN_CD:
+      if (pshy_tokens_len(toks) < 2) {
+        printf("usage: \n"
+               "  cd <path>\n");
+        goto cleanup_tokens;
+      }
+
+      if (chdir(tokens[1])) perror("chdir");
+
+      goto cleanup_tokens;
+
+    case TOKEN_NOT_BUILTIN:
+    default:
+      break;
+    }
+
+    // fork stuff here
+
+    pid_t pid = fork();
 
     if (pid == 0) {
       // child
@@ -53,7 +77,7 @@ void pshy_shell() {
       // parent
       int wstatus = 0;
       do {
-        wpid = waitpid(pid, &wstatus, WUNTRACED | WCONTINUED);
+        waitpid(pid, &wstatus, WUNTRACED | WCONTINUED);
       } while (!WIFEXITED(wstatus) && !WIFSIGNALED(wstatus));
     }
 
@@ -62,7 +86,9 @@ void pshy_shell() {
       perror("fork");
     }
 
+  cleanup_tokens:
     pshy_tokens_free(toks);
+  cleanup_buff:
     pshy_buff_free(buff);
   }
 }

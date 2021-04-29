@@ -20,8 +20,15 @@
 
 struct pshy_tokens;
 
+enum token_builtin {
+  TOKEN_NOT_BUILTIN,
+  TOKEN_BUILTIN_EXIT,
+  TOKEN_BUILTIN_CD,
+};
+
 struct pshy_tokens* pshy_tokens_from_buff(const struct pshy_buff* const);
 struct pshy_tokens* pshy_tokens_create();
+enum token_builtin pshy_tokens_builtin(const struct pshy_tokens* const);
 void pshy_tokens_free(struct pshy_tokens*);
 const char** pshy_tokens_get(const struct pshy_tokens* const);
 size_t pshy_tokens_len(const struct pshy_tokens* const);
