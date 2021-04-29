@@ -12,6 +12,9 @@ cc_library(
         "shell.c",
         "tokenizer.c",
     ],
+    visibility = [
+        "//visibility:public"
+    ]
 )
 
 cc_binary(

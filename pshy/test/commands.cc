@@ -13,8 +13,22 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#pragma once
+#include "gtest/gtest.h"
+#include "gmock/gmock.h"
 
-#include <stdio.h>
+#include <string.h>
 
-void pshy_shell(FILE*);
+extern "C" {
+  // this works because we're linking with the C lib (check the build
+  // file)
+  void pshy_shell(FILE*);
+}
+
+TEST(pshy, exit_command) {
+  char *buff = strdup("exit");
+  FILE* f = fmemopen(buff, strnlen(buff, 10), "r");
+
+  pshy_shell(f);
+
+  fclose(f);
+}
