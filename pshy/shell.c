@@ -23,7 +23,7 @@
 
 #include <sys/wait.h>
 
-void pshy_shell() {
+void pshy_shell(FILE* stream) {
   bool is_done = false;
   while (!is_done) {
     struct pshy_buff *buff = pshy_buff_create();
@@ -31,7 +31,7 @@ void pshy_shell() {
     printf("ψ ");
 
     char rc = 0;
-    while ((rc = getchar())) {
+    while ((rc = getc(stream))) {
       if (rc == 0) break;
       if (rc == EOF) break;
       if (pshy_is_delimiter(rc)) break;
@@ -48,15 +48,14 @@ void pshy_shell() {
     case TOKEN_BUILTIN_EXIT:
       is_done = true;
       goto cleanup_tokens;
+
     case TOKEN_BUILTIN_CD:
       if (pshy_tokens_len(toks) < 2) {
-        printf("usage: \n"
-               "  cd <path>\n");
+        printf("usage: \n""  cd <path>\n");
         goto cleanup_tokens;
       }
 
       if (chdir(tokens[1])) perror("chdir");
-
       goto cleanup_tokens;
 
     case TOKEN_NOT_BUILTIN:
