@@ -1,3 +1,4 @@
+#pragma once
 /*
    Copyright 2021 Simon (psyomn) Symeonidis
 
@@ -13,8 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#pragma once
+#include <stddef.h>
 
-#include <stdbool.h>
+#include "dynbuf.h"
 
-bool pshy_is_delimiter(char c);
+struct pshy_tokens;
+
+struct pshy_tokens* pshy_tokens_from_buff(const struct pshy_buff* const);
+struct pshy_tokens* pshy_tokens_create();
+void pshy_tokens_free(struct pshy_tokens*);
+const char** pshy_tokens_get(const struct pshy_tokens* const);
+size_t pshy_tokens_len(const struct pshy_tokens* const);

@@ -13,8 +13,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#pragma once
+#include "shell.h"
 
-#include <stdbool.h>
+#include <stdio.h>
 
-bool pshy_is_delimiter(char c);
+int main(int argc, char *argv[]) {
+  pshy_shell();
+  return 0;
+}

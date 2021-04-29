@@ -1,5 +1,5 @@
 /*
-   Copyright 2021 Simon (psyomn) Symeonidis
+   Copyright 2021 Simon (pshyomn) Symeonidis
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -13,16 +13,35 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
+#include "dynbuf.h"
 #include "shell.h"
 #include "utils.h"
+#include "tokenizer.h"
 
-#include <iostream> // todo remove me
+#include <stdio.h>
+#include <unistd.h>
 
-namespace psy::pshy {
-  void Shell::Run(const std::string& line) {
-    const auto tokens = psy::pshy::IntoTokens(line);
+#include <sys/wait.h>
 
-    for (const auto& tok : tokens)
-      std::cout << tok << ", ";
+void pshy_shell() {
+  while (true) {
+    struct pshy_buff *buff = pshy_buff_create();
+
+    printf("ψ ");
+
+    char rc = 0;
+    while ((rc = getchar())) {
+      if (rc == 0) break;
+      if (rc == EOF) break;
+      if (pshy_is_delimiter(rc)) break;
+
+      pshy_buff_add(buff, rc);
+    }
+
+    struct pshy_tokens *toks = pshy_tokens_from_buff(buff);
+    const char **tokens = pshy_tokens_get(toks);
+
+    pshy_tokens_free(toks);
+    pshy_buff_free(buff);
   }
 }

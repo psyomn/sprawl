@@ -1,19 +1,23 @@
 cc_library(
     name = "libpshy",
     hdrs = [
-        "utils.h", 
+        "dynbuf.h",
+        "utils.h",
         "shell.h",
+        "tokenizer.h",
     ],
     srcs = [
-        "utils.cc", 
-        "shell.cc",
+        "dynbuf.c",
+        "utils.c",
+        "shell.c",
+        "tokenizer.c",
     ],
 )
 
 cc_binary(
     name = "pshy",
     srcs = [
-        "main.cc",
+        "main.c",
     ],
     deps = [
         "//pshy:libpshy"

@@ -13,33 +13,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#include <string>
-#include <vector>
-#include <sstream>
-
 #include "utils.h"
 
-namespace psy::pshy {
-  std::vector<std::string> IntoTokens(const std::string& line) {
-    const std::string delimiters = " \t";
-
-    std::vector<std::string> ret;
-    std::stringstream ss;
-    for (auto c : line) {
-      auto isDelimited = delimiters.find_first_of(c) != std::string::npos;
-
-      if (isDelimited && ss.str().size() > 0) {
-        ret.push_back(ss.str());
-        ss.str("");
-      }
-
-      if (!isDelimited)
-        ss << c;
-    }
-
-    if (ss.str().size() > 0)
-      ret.push_back(ss.str());
-
-    return ret;
+bool pshy_is_delimiter(char c) {
+  // todo: might be useful in the future for pipes or other special
+  //   characters
+  switch (c) {
+  case '\n': return true;
   }
+  return false;
 }

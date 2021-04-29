@@ -15,13 +15,4 @@
 */
 #pragma once
 
-#include <string>
-#include <vector>
-
-namespace psy::pshy {
-  class Shell {
-  public:
-    void Run(const std::string& line);
-  private:
-  };
-}
+void pshy_shell();

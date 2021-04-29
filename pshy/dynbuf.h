@@ -1,5 +1,5 @@
 /*
-   Copyright 2021 Simon (psyomn) Symeonidis
+   Copyright 2021 Simon (pshyomn) Symeonidis
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -13,21 +13,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#include <iostream>
+#pragma once
 
-#include "utils.h"
-#include "shell.h"
+#include <stdlib.h>
 
-int main(int argc, char *argv[]) {
-  psy::pshy::Shell shell;
+struct pshy_buff;
 
-  std::cout << "ψ ";
-  for (std::string line; std::getline(std::cin, line); ) {
-    shell.Run(line);
-
-    std::cout << std::endl;
-    std::cout << "ψ ";
-  }
-
-  return 0;
-}
+struct pshy_buff* pshy_buff_create(void);
+void pshy_buff_free(struct pshy_buff*);
+void pshy_buff_add(struct pshy_buff*, char c);
+void pshy_buff_clear(struct pshy_buff*);
+const char* pshy_buff_data(const struct pshy_buff *const);
+size_t pshy_buff_len(const struct pshy_buff *const);
