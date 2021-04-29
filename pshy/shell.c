@@ -41,6 +41,27 @@ void pshy_shell() {
     struct pshy_tokens *toks = pshy_tokens_from_buff(buff);
     const char **tokens = pshy_tokens_get(toks);
 
+    pid_t pid = 0, wpid;
+    pid = fork();
+
+    if (pid == 0) {
+      // child
+      if (execvp(tokens[0], tokens) != 0) perror("execvp");
+    }
+
+    if (pid > 0) {
+      // parent
+      int wstatus = 0;
+      do {
+        wpid = waitpid(pid, &wstatus, WUNTRACED | WCONTINUED);
+      } while (!WIFEXITED(wstatus) && !WIFSIGNALED(wstatus));
+    }
+
+    if (pid < 0) {
+      // error
+      perror("fork");
+    }
+
     pshy_tokens_free(toks);
     pshy_buff_free(buff);
   }

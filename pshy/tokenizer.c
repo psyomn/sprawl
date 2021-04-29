@@ -23,6 +23,12 @@ struct pshy_tokens {
   char **tokens;
 };
 
+void add_item(struct pshy_tokens *toks, char *word) {
+  toks->len += 1;
+  toks->tokens = realloc(toks->tokens, sizeof(toks->tokens[0]) * toks->len);
+  toks->tokens[toks->len-1] = word;
+}
+
 struct pshy_tokens* pshy_tokens_from_buff(const struct pshy_buff *const buff) {
   char *data = strdup(pshy_buff_data(buff));
   char *data_for_tok = data;
@@ -33,17 +39,16 @@ struct pshy_tokens* pshy_tokens_from_buff(const struct pshy_buff *const buff) {
   struct pshy_tokens* toks = pshy_tokens_create();
 
   while ((token = strtok_r(data_for_tok, " ", &save1)) != NULL) {
-    char *word = strdup(token);
-
-    toks->len += 1;
-    toks->tokens = realloc(toks->tokens, sizeof(toks->tokens[0]) * toks->len);
-    toks->tokens[toks->len-1] = word;
+    add_item(toks, strdup(token));
 
     // strtok_r requires NULL for every subsequent call
     data_for_tok = NULL;
   }
 
   free(data);
+
+  // null terminate
+  add_item(toks, NULL);
 
   return toks;
 }
