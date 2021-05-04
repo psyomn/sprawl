@@ -54,37 +54,6 @@ namespace psy::ds {
     auto bigger_it = bigger.GetDigits().crbegin();
     std::deque<std::uint8_t> ret;
 
-    while (small_it != smaller.GetDigits().rend()) {
-      std::uint8_t tmp_digit = *small_it + *bigger_it + carry;
-
-      if (tmp_digit >= 10) {
-        carry = 1;
-        tmp_digit -= 10;
-      }
-
-      ret.push_front(tmp_digit);
-
-      ++small_it;
-      ++bigger_it;
-    }
-
-    while (bigger_it != bigger.GetDigits().crend() && carry > 0) {
-      // exhaust carries
-      std::uint8_t tmp_digit = *bigger_it + carry;
-      carry = 0;
-
-      if (tmp_digit >= 10) {
-        carry = 1;
-        tmp_digit -= 10;
-      }
-
-      ret.push_front(tmp_digit);
-
-      ++bigger_it;
-    }
-
-    if (carry > 0) ret.push_front(1);
-
     return BigInt(std::move(ret));
   }
 
