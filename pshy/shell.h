@@ -17,4 +17,4 @@
 
 #include <stdio.h>
 
-void pshy_shell(FILE*);
+void pshy_shell(FILE* instream, FILE* outstream);

@@ -16,6 +16,7 @@
 #include "tokenizer.h"
 
 #include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 struct pshy_tokens {
@@ -24,8 +25,15 @@ struct pshy_tokens {
 };
 
 void add_item(struct pshy_tokens *toks, char *word) {
-  toks->len += 1;
-  toks->tokens = realloc(toks->tokens, sizeof(toks->tokens[0]) * toks->len);
+  ++toks->len;
+
+  void *tmp = realloc(toks->tokens, sizeof(toks->tokens) * toks->len);
+  if (tmp == NULL) {
+    perror("realloc");
+    abort();
+  }
+
+  toks->tokens = tmp;
   toks->tokens[toks->len-1] = word;
 }
 
@@ -40,23 +48,19 @@ struct pshy_tokens* pshy_tokens_from_buff(const struct pshy_buff *const buff) {
   char *data = strdup(pshy_buff_data(buff));
   char *data_for_tok = data;
 
-  char *save1 = NULL;
-  char *token = NULL;
-
   struct pshy_tokens* toks = pshy_tokens_create();
 
-  while ((token = strtok_r(data_for_tok, " ", &save1)) != NULL) {
+  char *save = NULL;
+  char *token = NULL;
+  while ((token = strtok_r(data_for_tok, " ", &save)) != NULL) {
     add_item(toks, strdup(token));
-
-    // strtok_r requires NULL for every subsequent call
     data_for_tok = NULL;
   }
 
-  free(data);
-
-  // null terminate
+  // null terminate string list
   add_item(toks, NULL);
 
+  free(data);
   return toks;
 }
 
@@ -65,15 +69,15 @@ struct pshy_tokens* pshy_tokens_create() {
 }
 
 void pshy_tokens_free(struct pshy_tokens *toks){
-  for (size_t i = 0; i < toks->len; ++i) {
+  for (size_t i = 0; i < toks->len; ++i)
     free(toks->tokens[i]);
-  }
 
+  free(toks->tokens);
   free(toks);
 }
 
-const char** pshy_tokens_get(const struct pshy_tokens* const toks) {
-  return toks->tokens;
+char* const* pshy_tokens_get(const struct pshy_tokens* const toks) {
+  return (char* const *) toks->tokens;
 }
 
 size_t pshy_tokens_len(const struct pshy_tokens* const toks) {

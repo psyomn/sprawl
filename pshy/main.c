@@ -18,6 +18,6 @@
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
-  pshy_shell(stdin);
+  pshy_shell(stdin, stdout);
   return 0;
 }

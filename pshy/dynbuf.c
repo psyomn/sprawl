@@ -14,6 +14,7 @@
    limitations under the License.
 */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -39,6 +40,15 @@ void pshy_buff_add(struct pshy_buff *buff, char c) {
   if (buff->len + 1 >= buff->cap) {
     buff->cap <<= 1;
     buff->data = realloc(buff->data, buff->cap);
+
+    if (buff->data == NULL) {
+      perror("realloc");
+      abort();
+    }
+
+    memset(buff->data + buff->len + 1,
+           0,
+           buff->cap - buff->len - 1);
   }
 
   buff->data[buff->len] = c;
