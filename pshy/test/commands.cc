@@ -65,7 +65,7 @@ TEST(pshy, tokenizer) {
   const size_t tok_len = pshy_tokens_len(toks);
   EXPECT_EQ(tok_len, 11);
 
-  const char** raw_tokens = pshy_tokens_get(toks);
+  char* const* raw_tokens = pshy_tokens_get(toks);
   EXPECT_TRUE(raw_tokens[10] == NULL);
   EXPECT_FALSE(raw_tokens[0] == NULL);
   EXPECT_TRUE(strncmp(raw_tokens[0], "aaaaa", 5) == 0);
