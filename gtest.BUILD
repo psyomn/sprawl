@@ -26,11 +26,3 @@ cc_library(
   visibility = ["//visibility:public"],
   deps = [":gtest"],
 )
-
-cc_library(
-  name = "pngpp",
-  hdrs = glob(["*.hpp"]),
-  linkopts = ["-lpng"],
-  includes = ["."],
-  visibility = ["//visibility:public"],
-)
