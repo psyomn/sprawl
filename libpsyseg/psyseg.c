@@ -83,6 +83,7 @@ void create_and_stamp(struct psyseg_file *pf) {
   write(fd, pf->cursor, pf->file_size);
 
   close(fd);
+}
 
 
 void cleanup(struct psyseg_file *pf) {
