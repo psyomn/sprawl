@@ -33,12 +33,3 @@ cc_binary(
         "//common:psycommon"
     ]
 )
-
-cc_binary(
-    name = "png-example",
-    srcs = ["png-example.cc"],
-    linkopts = ["-lpng"],
-    deps = [
-        "@pngpp//:pngpp"
-    ],
-)
