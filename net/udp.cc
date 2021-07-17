@@ -16,7 +16,11 @@
 #include "udp.h"
 
 namespace psy::net {
-  void UDPClient::Send(const std::uint8_t message[kMaxUDPSize]) const {
+  std::string ErrorToString(int err) {
+    return std::string(strerror(err));
+  }
+
+  void UDPClient::Send(const std::uint8_t message[kMaxUDPSize]) {
     const ssize_t ret =
       sendto(sock_fd_,
              reinterpret_cast<const void*>(message),
@@ -29,7 +33,7 @@ namespace psy::net {
     else { /* return number of bytes here */ }
   }
 
-  std::vector<std::uint8_t> UDPClient::Receive() const {
+  std::vector<std::uint8_t> UDPClient::Receive() {
     char buffer[psy::net::kMaxUDPSize] = {0};
     const ssize_t ret = recv(sock_fd_,
                              reinterpret_cast<void*>(buffer),
@@ -37,21 +41,29 @@ namespace psy::net {
                              0);
 
     if (ret < 0) {
-      // TODO: Error handling here
-      // std::cerr << "problem receiving message: " << ret << std::endl;
+      last_error_ = errno;
       return {};
     }
 
+    last_error_ = (std::nullopt);
     return std::vector<std::uint8_t>(buffer, buffer + sizeof(buffer));
   }
 
-  void UDPListener::ListenWith(std::function<void(std::uint8_t[kMaxUDPSize])> listenfunc) const {
+  bool UDPClient::Errored() const {
+    return last_error_.has_value();
+  }
+
+  void UDPListener::ListenWith(std::function<void(std::uint8_t[kMaxUDPSize])> listenfunc) {
     while (true) {
       std::uint8_t buffer[kMaxUDPSize] = {0};
       ssize_t recv_size = read(server_fd_, &buffer, kMaxUDPSize);
 
-      if (recv_size < 0) { /* socket error - decide what the api should be like */ }
+      if (recv_size < 0) {
+        last_error_ = errno;
+        continue;
+      }
 
+      last_error_ = std::nullopt;
       listenfunc(buffer);
     }
   }

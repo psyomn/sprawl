@@ -24,6 +24,7 @@
 #include <cstring>
 #include <stdexcept>
 #include <functional>
+#include <optional>
 #include <string>
 
 #include <unistd.h>
@@ -35,6 +36,8 @@
 namespace psy::net {
   constexpr size_t kMaxUDPSize = 508;
 
+  static std::string ErrorToString(int err);
+
   /**
    * This is mostly a naive implementation to get most of my use
    * cases satisfied, and I suggest that you don't use this
@@ -43,7 +46,8 @@ namespace psy::net {
   public:
     UDPClient(std::string host, std::uint16_t port) :
       buffer_({0}), sock_fd_( socket(AF_INET, SOCK_DGRAM, 0)),
-      host_(host), port_(port), destination_addr_({0}) {
+      host_(host), port_(port), destination_addr_({0}),
+      last_error_(std::nullopt) {
       destination_addr_.sin_family = AF_INET;
       destination_addr_.sin_addr.s_addr = inet_addr(host_.c_str());
       destination_addr_.sin_port = htons(port_);
@@ -54,20 +58,24 @@ namespace psy::net {
     UDPClient(UDPClient&& other) = delete;
     UDPClient& operator=(UDPClient&& other) = delete;
 
-    void Send(const std::uint8_t message[kMaxUDPSize]) const;
-    std::vector<std::uint8_t> Receive() const;
+    void Send(const std::uint8_t message[kMaxUDPSize]);
+    std::vector<std::uint8_t> Receive();
+    bool Errored() const;
+
   private:
     std::uint8_t buffer_[kMaxUDPSize];
     int sock_fd_;
     std::string host_;
     std::uint16_t port_;
     struct sockaddr_in destination_addr_;
+    std::optional<int> last_error_;
   };
 
   class UDPListener {
   public:
     explicit UDPListener(std::uint16_t port) :
-      port_(port), address_({0}), server_fd_(0) {
+      port_(port), address_({0}), server_fd_(0),
+      last_error_(std::nullopt) {
 
       if ((server_fd_ = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
         throw std::runtime_error("could not create socket");
@@ -89,11 +97,12 @@ namespace psy::net {
     UDPListener(UDPListener&& other) = delete;
     UDPListener& operator=(UDPListener&& other) = delete;
 
-    void ListenWith(std::function<void(std::uint8_t[kMaxUDPSize])>) const;
+    void ListenWith(std::function<void(std::uint8_t[kMaxUDPSize])>);
   private:
     std::uint16_t port_;
     struct sockaddr_in address_;
     int server_fd_;
+    std::optional<int> last_error_;
   };
 }
 
