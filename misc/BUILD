@@ -16,6 +16,9 @@ cc_binary(
 cc_binary(
     name = "psy-udp",
     srcs = ["udp.cc"],
+    deps = [
+        "//net:psynet"
+    ]
 )
 
 cc_binary(

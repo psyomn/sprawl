@@ -13,7 +13,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-
 #include <cstdint>
 #include <iostream>
 #include <sstream>
@@ -21,14 +20,8 @@
 
 #include <getopt.h>
 #include <stdio.h>
-#include <unistd.h>
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netinet/udp.h>
-#include <arpa/inet.h>
-#include <netdb.h>
+#include "net/udp.h"
 
 // declarations
 
@@ -39,84 +32,57 @@ struct session {
   std::string message;
   bool wait_for_reply;
   int sock_fd;
+  psy::net::UDPClient client_;
 
+  // TODO fix ports
   session() : host("127.0.0.1"),
-              port("9090"),
-              port_i(9090),
+              port("9995"),
+              port_i(9995),
               message(""),
               wait_for_reply(false),
-              sock_fd(0) {}
+              client_({host, port_i})
 
-  ~session() { close(sock_fd); }
+              {}
 
-  void make() {
-    port_i = 0;
-    std::stringstream ss;
-    ss << port;
-    ss >> port_i;
-
-    sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
-  }
+  ~session() {}
 };
 
-void send_message_to(const struct session& sess) noexcept;
-void receive_and_print(const struct session& sess) noexcept;
-void print_usage(const char * const name) noexcept;
+void send_message_to(const struct session& sess);
+void receive_and_print(const struct session& sess);
+void print_usage(const char * const name);
 
 // implementation
 
-void send_message_to(const struct session& sess) noexcept {
+void send_message_to(const struct session& sess) {
   std::cout << "sending message[" << sess.message << "] to "
             << sess.host << ":"
             << sess.port << std::endl;
 
-  // from what I understand, it seems that getaddrinfo is the more
-  // "modern" way of doing things now. I can't be arsed though. the
-  // documentation is horrendous, and I just really want to get
-  // something very simple down.
+  std::uint8_t buffer[psy::net::kMaxUDPSize] = {0};
 
-  struct sockaddr_in destination_addr = {0};
-  destination_addr.sin_family = AF_INET;
-  destination_addr.sin_addr.s_addr = inet_addr(sess.host.c_str());
-  destination_addr.sin_port = htons(sess.port_i);
+  (void) memcpy(buffer, sess.message.c_str(), sizeof(buffer));
 
-  const ssize_t ret = sendto(
-    sess.sock_fd,
-    reinterpret_cast<const void*>(sess.message.c_str()),
-    sess.message.size(),
-    0,
-    reinterpret_cast<struct sockaddr*>(&destination_addr),
-    sizeof(destination_addr));
+  sess.client_.Send(buffer);
 
-  if (ret == -1)
-    std::cerr << "problem sending message: " << ret << std::endl;
-  else
-    std::cout << "sent number of bytes: " << ret << std::endl;
+  // TODO: fix these when I figure out the error handling in the UDP
+  // api
+  // if (ret == -1)
+  //   std::cerr << "problem sending message: " << ret << std::endl;
+  // else
+  //   std::cout << "sent number of bytes: " << ret << std::endl;
 }
 
-void receive_and_print(const struct session& sess) noexcept {
+void receive_and_print(const struct session& sess) {
   std::cout << "waiting for a reply... " << std::endl;
-  char buffer[508] = {0}; // max unfragmented
 
-  const ssize_t ret = recv(
-    sess.sock_fd,
-    reinterpret_cast<void*>(buffer),
-    sizeof(buffer),
-    0
-  );
+  auto bytes = sess.client_.Receive();
+  std::cout << "received " << bytes.size() << "bytes" << std::endl;
 
-  if (ret < 0) {
-    std::cerr << "problem receiving message: " << ret << std::endl;
-    return;
-  }
-
-  const size_t safe_ret = static_cast<size_t>(ret);
-  std::cout << "received " << ret << "bytes" << std::endl;
-  const std::string ret_string(buffer, safe_ret);
+  const std::string ret_string(bytes.begin(), bytes.end());
   std::cout << ret_string << std::endl;
 }
 
-void print_usage(const char * const name) noexcept {
+void print_usage(const char * const name) {
   fprintf(stderr, "Usage: %s <-s message> [-r receive] [-h host default=127.0.0.1] [-p port default=9090]\n", name);
 }
 
@@ -148,8 +114,6 @@ int main(int argc, char* argv[]) {
     print_usage(argv[0]);
     return EXIT_SUCCESS;
   }
-
-  sess.make();
 
   send_message_to(sess);
   if (sess.wait_for_reply) receive_and_print(sess);

@@ -33,7 +33,7 @@
 #include <arpa/inet.h>
 
 namespace psy::net {
-  constexpr size_t kMaxUDPSize = 512;
+  constexpr size_t kMaxUDPSize = 508;
 
   /**
    * This is mostly a naive implementation to get most of my use
@@ -55,6 +55,7 @@ namespace psy::net {
     UDPClient& operator=(UDPClient&& other) = delete;
 
     void Send(const std::uint8_t message[kMaxUDPSize]) const;
+    std::vector<std::uint8_t> Receive() const;
   private:
     std::uint8_t buffer_[kMaxUDPSize];
     int sock_fd_;

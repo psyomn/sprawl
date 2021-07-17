@@ -29,6 +29,22 @@ namespace psy::net {
     else { /* return number of bytes here */ }
   }
 
+  std::vector<std::uint8_t> UDPClient::Receive() const {
+    char buffer[psy::net::kMaxUDPSize] = {0};
+    const ssize_t ret = recv(sock_fd_,
+                             reinterpret_cast<void*>(buffer),
+                             sizeof(buffer),
+                             0);
+
+    if (ret < 0) {
+      // TODO: Error handling here
+      // std::cerr << "problem receiving message: " << ret << std::endl;
+      return {};
+    }
+
+    return std::vector<std::uint8_t>(buffer, buffer + sizeof(buffer));
+  }
+
   void UDPListener::ListenWith(std::function<void(std::uint8_t[kMaxUDPSize])> listenfunc) const {
     while (true) {
       std::uint8_t buffer[kMaxUDPSize] = {0};
