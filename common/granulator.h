@@ -13,8 +13,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#ifndef CACOPHAGY_GRANULATOR_H_
-#define CACOPHAGY_GRANULATOR_H_
+#ifndef CACOPHAGY_COMMON_GRANULATOR_H_
+#define CACOPHAGY_COMMON_GRANULATOR_H_
 
 #include <cstddef>
 #include <utility>
