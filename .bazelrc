@@ -32,4 +32,5 @@ build --cxxopt='-pipe'
 build --cxxopt='-O3'
 build --cxxopt='-Werror'
 build --cxxopt='-march=native'
+build --cxxopt='-Wunused-result'
 build --strip=never
