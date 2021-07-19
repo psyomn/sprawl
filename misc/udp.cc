@@ -15,6 +15,7 @@
 */
 #include <cstdint>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 
@@ -25,98 +26,114 @@
 
 // declarations
 
-struct session {
-  std::string host;
-  std::string port;
-  std::uint16_t port_i;
-  std::string message;
-  bool wait_for_reply;
-  int sock_fd;
+struct Session {
   psy::net::UDPClient client_;
-
-  // TODO fix ports
-  session() : host("127.0.0.1"),
-              port("9995"),
-              port_i(9995),
-              message(""),
-              wait_for_reply(false),
-              client_({host, port_i})
-
-              {}
-
-  ~session() {}
+  std::string message_;
+  bool wait_for_reply_;
+  Session(std::string host, std::uint16_t port,
+          std::string message, bool wait) :
+    client_({host, port}), message_(message), wait_for_reply_(wait) {}
 };
 
-void send_message_to(const struct session& sess);
-void receive_and_print(const struct session& sess);
-void print_usage(const char * const name);
+struct SessionBuilder {
+  std::string host_;
+  std::string port_;
+  std::uint16_t port_i_;
+  std::string message_;
+  bool wait_for_reply_;
+
+  SessionBuilder() :
+    host_("127.0.0.1"),
+    port_("9995"),
+    port_i_(9995),
+    message_(""),
+    wait_for_reply_(false) {}
+
+  SessionBuilder* Host(std::string host) { host_ = host; return this; }
+  SessionBuilder* Message(std::string message) { message_ = message; return this; }
+  SessionBuilder* WaitForReply(bool wait) { wait_for_reply_ = wait; return this; }
+
+  SessionBuilder* Port(std::string port) {
+    std::stringstream ss;
+    ss << port_;
+    ss >> port_i_;
+    return this;
+  }
+
+  std::unique_ptr<Session> finalize() {
+    return std::unique_ptr<Session>
+      (new Session(host_, port_i_, message_, wait_for_reply_));
+  }
+
+  ~SessionBuilder() {}
+};
+
+void SendMessageTo(std::unique_ptr<Session>& sess);
+void ReceiveAndPrint(std::unique_ptr<Session>& sess);
+void PrintUsage(const char * const name);
 
 // implementation
 
-void send_message_to(const struct session& sess) {
-  std::cout << "sending message[" << sess.message << "] to "
-            << sess.host << ":"
-            << sess.port << std::endl;
+void SendMessageTo(std::unique_ptr<Session>& sess) {
+  std::cout << "sending message [" << sess->message_ << "] to "
+            << sess->client_.GetHost() << ":"
+            << sess->client_.GetPort() << std::endl;
 
   std::uint8_t buffer[psy::net::kMaxUDPSize] = {0};
 
-  (void) memcpy(buffer, sess.message.c_str(), sizeof(buffer));
+  (void) memcpy(buffer, sess->message_.c_str(), sizeof(buffer));
 
-  sess.client_.Send(buffer);
-
-  // TODO: fix these when I figure out the error handling in the UDP
-  // api
-  // if (ret == -1)
-  //   std::cerr << "problem sending message: " << ret << std::endl;
-  // else
-  //   std::cout << "sent number of bytes: " << ret << std::endl;
+  sess->client_.Send(buffer);
+  if (sess->client_.Errored())
+    std::cerr << "error sending message: " << sess->client_.ErrorString() << std::endl;
 }
 
-void receive_and_print(const struct session& sess) {
+void ReceiveAndPrint(std::unique_ptr<Session>& sess) {
   std::cout << "waiting for a reply... " << std::endl;
 
-  auto bytes = sess.client_.Receive();
+  auto bytes = sess->client_.Receive();
   std::cout << "received " << bytes.size() << "bytes" << std::endl;
 
   const std::string ret_string(bytes.begin(), bytes.end());
   std::cout << ret_string << std::endl;
 }
 
-void print_usage(const char * const name) {
+void PrintUsage(const char * const name) {
   fprintf(stderr, "Usage: %s <-s message> [-r receive] [-h host default=127.0.0.1] [-p port default=9090]\n", name);
 }
 
 int main(int argc, char* argv[]) {
-  struct session sess;
+  struct SessionBuilder builder;
   int opt = 0;
 
   while ((opt = getopt(argc, argv, "h:p:s:r")) != -1) {
     switch (opt) {
     case 'h':
-      sess.host = optarg;
+      builder.Host(optarg);
       break;
     case 'p':
-      sess.port = optarg;
+      builder.Port(optarg);
       break;
     case 's':
-      sess.message = optarg;
+      builder.Message(optarg);
       break;
     case 'r':
-      sess.wait_for_reply = true;
+      builder.WaitForReply(true);
       break;
-    default: /* '?' */
-      print_usage(argv[0]);
+    default:
+      PrintUsage(argv[0]);
       exit(EXIT_FAILURE);
     }
   }
 
   if (argc <= 1) {
-    print_usage(argv[0]);
+    PrintUsage(argv[0]);
     return EXIT_SUCCESS;
   }
 
-  send_message_to(sess);
-  if (sess.wait_for_reply) receive_and_print(sess);
+  auto sess = builder.finalize();
+  SendMessageTo(sess);
+  if (sess->wait_for_reply_) ReceiveAndPrint(sess);
 
   return EXIT_SUCCESS;
 }
