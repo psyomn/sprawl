@@ -61,6 +61,10 @@ namespace psy::net {
     void Send(const std::uint8_t message[kMaxUDPSize]);
     std::vector<std::uint8_t> Receive();
     bool Errored() const;
+    std::string ErrorString() const;
+
+    inline const std::string& GetHost() const { return host_; }
+    inline std::uint16_t GetPort() const { return port_; }
 
   private:
     std::uint8_t buffer_[kMaxUDPSize];

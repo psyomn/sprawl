@@ -53,6 +53,10 @@ namespace psy::net {
     return last_error_.has_value();
   }
 
+  std::string UDPClient::ErrorString() const {
+    return ErrorToString(last_error_.value());
+  }
+
   void UDPListener::ListenWith(std::function<void(std::uint8_t[kMaxUDPSize])> listenfunc) {
     while (true) {
       std::uint8_t buffer[kMaxUDPSize] = {0};
