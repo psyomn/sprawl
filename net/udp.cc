@@ -39,7 +39,6 @@ namespace psy::net {
                              reinterpret_cast<void*>(buffer),
                              sizeof(buffer),
                              0);
-
     if (ret < 0) {
       last_error_ = errno;
       return {};

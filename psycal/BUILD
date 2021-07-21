@@ -1,14 +1,15 @@
 cc_library(
     name = "psycal",
-    srcs = ["psycal.cc", "utils.cc"],
-    hdrs = ["psycal.h", "utils.h"],
-    deps = ["//common:psycommon"],
+    srcs = ["event.cc", "utils.cc", "message.cc", "server.cc"],
+    hdrs = ["event.h", "utils.h", "message.h", "server.h"],
+    deps = ["//common:psycommon",
+            "//net:psynet"],
+    visibility = ["//psycal/test:__pkg__"],
 )
 
 cc_binary(
     name = "psycald",
     srcs = ["main.cc"],
     deps = ["//psycal:psycal",
-            "//common:psycommon",
-            "//net:psynet"],
+            "//common:psycommon"],
 )

@@ -45,12 +45,16 @@ namespace psy::net {
   class UDPClient {
   public:
     UDPClient(std::string host, std::uint16_t port) :
-      buffer_({0}), sock_fd_( socket(AF_INET, SOCK_DGRAM, 0)),
+      buffer_({0}), sock_fd_(socket(AF_INET, SOCK_DGRAM, 0)),
       host_(host), port_(port), destination_addr_({0}),
       last_error_(std::nullopt) {
       destination_addr_.sin_family = AF_INET;
       destination_addr_.sin_addr.s_addr = inet_addr(host_.c_str());
       destination_addr_.sin_port = htons(port_);
+    }
+
+    ~UDPClient() {
+      if (sock_fd_ != 0) close(sock_fd_);
     }
 
     UDPClient(const UDPClient& other) = delete;
