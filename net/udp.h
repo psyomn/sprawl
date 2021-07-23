@@ -89,7 +89,7 @@ namespace psy::net {
         throw std::runtime_error("could not create socket");
 
       address_.sin_family = AF_INET;
-      address_.sin_addr.s_addr = htonl(INADDR_ANY);
+      address_.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
       address_.sin_port = htons(port_);
 
       if ((bind(server_fd_, reinterpret_cast<struct sockaddr *>(&address_), sizeof(address_))) == -1)
