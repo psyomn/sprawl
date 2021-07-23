@@ -15,15 +15,29 @@
 */
 #include "codec.h"
 namespace psy::common::Codec {
-  Result EncodeU64LE(std::uint64_t x, std::vector<std::uint8_t>& vec) {
+  Result EncodeU64LE(const std::uint64_t x, std::vector<std::uint8_t>& vec) {
     vec.push_back((x & 0xff));
     vec.push_back((x & 0xff00) >> 8);
     vec.push_back((x & 0xff0000) >> 16);
     vec.push_back((x & 0xff000000) >> 24);
-    vec.push_back((x & 0xff00000000) >> 24);
-    vec.push_back((x & 0xff0000000000) >> 32);
-    vec.push_back((x & 0xff000000000000) >> 40);
-    vec.push_back((x & 0xff00000000000000) >> 48);
+
+    vec.push_back((x & 0xff00000000) >> 32);
+    vec.push_back((x & 0xff0000000000) >> 40);
+    vec.push_back((x & 0xff000000000000) >> 48);
+    vec.push_back((x & 0xff00000000000000) >> 56);
+    return Result::Ok;
+  }
+
+  Result DecodeU64LE(std::uint64_t& x, const std::uint8_t* cursor) {
+    x =
+      std::uint64_t(*cursor)             |
+      std::uint64_t(*(cursor + 1)) << 8  |
+      std::uint64_t(*(cursor + 2)) << 16 |
+      std::uint64_t(*(cursor + 3)) << 24 |
+      std::uint64_t(*(cursor + 4)) << 32 |
+      std::uint64_t(*(cursor + 5)) << 40 |
+      std::uint64_t(*(cursor + 6)) << 48 |
+      std::uint64_t(*(cursor + 7)) << 56 ;
     return Result::Ok;
   }
 }

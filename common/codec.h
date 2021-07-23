@@ -19,6 +19,7 @@
 #include <vector>
 namespace psy::common::Codec {
   enum class Result { Ok, Error };
-  Result EncodeU64LE(std::uint64_t x, std::vector<std::uint8_t>& vec);
+  Result EncodeU64LE(const std::uint64_t x, std::vector<std::uint8_t>& vec);
+  Result DecodeU64LE(std::uint64_t& x, const std::uint8_t* cursor);
 }
 #endif
