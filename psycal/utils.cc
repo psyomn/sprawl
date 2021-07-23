@@ -6,13 +6,23 @@ namespace psy::psycal::Utils {
   std::optional<std::tm> ProcessTimestamp(const char* timestamp) {
     std::tm tm = {0};
 
-    char* try1 = ::strptime(timestamp, "%Hh%m", &tm);
-    if (try1 != NULL) return tm;
+    char* try1 = ::strptime(timestamp, "%Hh%M", &tm);
+    if (try1 != NULL) {
+      const time_t now = time(nullptr);
+      std::tm merge = {0};
+      (void) localtime_r(&now, &merge);
 
-    char* try2 = ::strptime(timestamp, "%Y-%m-%dT%Hh%m", &tm);
-    if (try2 != NULL) return std::nullopt;
+      tm.tm_year = merge.tm_year;
+      tm.tm_mon = merge.tm_mon;
+      tm.tm_mday = merge.tm_mday;
 
-    return tm;
+      return tm;
+    }
+
+    char* try2 = ::strptime(timestamp, "%Y-%m-%dT%Hh%M", &tm);
+    if (try2 != NULL) return tm;
+
+    return std::nullopt;
   }
 
   std::optional<std::string> CreateApplicationDirectories() {
