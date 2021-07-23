@@ -13,10 +13,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
+#include <stdexcept>
+
 #include "message.h"
 
 #include "common/codec.h"
 namespace psy::psycal::Message {
+  // for now we're dealing with one event per udp packet. ability to
+  // pack more in the future but we don't really care about that for
+  // now)
   std::vector<std::uint8_t> IntoBuffer(const std::vector<Event>& events) {
     std::vector<std::uint8_t> ret;
 
@@ -29,8 +34,25 @@ namespace psy::psycal::Message {
     return ret;
   }
 
-  std::vector<Event> FromBuffer(std::uint16_t buffer[], size_t size) {
-    std::vector<Event> events;
-    return events;
+  std::vector<Event> FromBuffer(const std::uint8_t buffer[], const size_t size) {
+    namespace pcc = psy::common::Codec;
+
+    std::uint64_t timestamp_u64 = 0;
+    if (pcc::DecodeU64LE(timestamp_u64, &buffer[0]) != pcc::Result::Ok)
+      throw std::domain_error("error decoding timestamp");
+
+    std::uint64_t message_size_u64 = 0;
+    if (pcc::DecodeU64LE(message_size_u64, &buffer[0] + 8) != pcc::Result::Ok)
+      throw std::domain_error("error decoding message size");
+
+    std::string message;
+    std::copy(&buffer[0] + 16, &buffer[0] + 16 + message_size_u64,
+              std::back_inserter(message));
+
+    const time_t timestamp = time_t(timestamp_u64);
+    std::tm* tm = localtime(&timestamp);
+
+    return std::vector<Event>{Event(std::move(*tm),
+                                    std::move(std::vector<std::string>{message}))};
   }
 }

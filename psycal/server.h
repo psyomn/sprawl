@@ -18,22 +18,35 @@
 
 #include <string>
 #include <cstdint>
+#include <queue>
+#include <mutex>
+#include <thread>
+
+#include "event.h"
 
 #include "net/udp.h"
 
 namespace psy::psycal {
   class Server {
   public:
-    explicit Server(std::uint16_t port) : server_(port) {}
-    void Start() {
-      auto constexpr max_sz = psy::net::kMaxUDPSize;
-      auto listen_fn = [=](std::uint8_t bf[max_sz]) noexcept -> void {
-      };
+    explicit Server(const std::uint16_t port) :
+      server_(port), events_(sooner_events_), worker_(&Server::Tick, this) {}
 
-      server_.ListenWith(listen_fn);
-    }
+    void Start();
   private:
+    void Save();
+    void Tick();
+
     psy::net::UDPListener server_;
+
+    std::function<bool(const Event&, const Event&)> sooner_events_ = [](const Event& a, const Event& b) noexcept -> bool {
+      return a.GetUnixTimestamp() < b.GetUnixTimestamp();
+    };
+    std::priority_queue<Event,
+                        std::vector<Event>,
+                        decltype(sooner_events_)> events_;
+    std::thread worker_;
+    std::mutex lock_;
   };
 }
 

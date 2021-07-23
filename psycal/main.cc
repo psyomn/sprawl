@@ -25,6 +25,7 @@
 #include "event.h"
 #include "utils.h"
 #include "server.h"
+#include "message.h"
 
 namespace psycal {
   struct Session {
@@ -33,6 +34,7 @@ namespace psycal {
     std::optional<std::tm> maybe_timestamp_;
     bool server_mode_;
     std::uint16_t port_;
+    std::string host_;
 
     void PortStrIntoInt(const char* opt) {
       std::stringstream ss(opt);
@@ -59,13 +61,25 @@ namespace psycal {
       psy::psycal::Server server(port);
       server.Start();
     }
+
+    void SendEvent(const psy::psycal::Event& event, const Session& session) {
+      namespace pp = psy::psycal;
+      auto buffer = pp::Message::IntoBuffer(std::vector<pp::Event>{event});
+
+      psy::net::UDPClient client(session.host_, session.port_);
+
+      client.Send(buffer.data());
+      if (client.Errored()) {
+        std::cerr << "error sending message" << std::endl;
+      }
+    }
   };
 }
 
 int main(int argc, char *argv[]) {
   psy::psycal::Utils::CreateApplicationDirectories();
 
-  psycal::Session session = {0};
+  psycal::Session session = { .port_ = 9995, .host_ = "127.0.0.1" };
   int opt = 0;
 
   if (argc == 1) {
@@ -118,11 +132,12 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
+  // TODO: remove this
   std::vector<std::string> words;
   for (int i = optind; i < argc; ++i) words.push_back(argv[optind]);
 
-  psy::psycal::Event event(std::move(session.maybe_timestamp_.value()),
-                      std::move(words));
+  session.SendEvent(psy::psycal::Event(std::move(session.maybe_timestamp_.value()),
+                                       std::move(words)), session);
 
   return 0;
 }

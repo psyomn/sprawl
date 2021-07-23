@@ -59,4 +59,8 @@ namespace psy::psycal {
 
     return ret;
   }
+
+  const std::vector<std::string>& Event::GetWords() const {
+    return words_;
+  }
 }

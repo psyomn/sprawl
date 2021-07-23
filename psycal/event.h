@@ -17,6 +17,7 @@ namespace psy::psycal {
     Event(std::tm&&, std::vector<std::string>&&);
     std::uint64_t GetUnixTimestamp() const;
     std::vector<std::uint8_t> GetEncodedMessage() const;
+    const std::vector<std::string>& GetWords() const;
   private:
     std::tm tm_;
     std::vector<std::string> words_;

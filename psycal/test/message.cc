@@ -35,7 +35,7 @@ TEST(psycal, message_individual_encode) {
   EXPECT_THAT(event.GetEncodedMessage(), ::testing::ContainerEq(expected));
 }
 
-TEST(psycal, message_encode) {
+TEST(psycal, message_into_and_from_buffer) {
   std::tm tm = {0};
   ASSERT_EQ(strptime("2021-01-01T12h30", "%Y-%m-%dT%H-%m", &tm), nullptr);
 
@@ -50,4 +50,11 @@ TEST(psycal, message_encode) {
 
   auto actual = psy::psycal::Message::IntoBuffer({event});
   EXPECT_THAT(expected, ::testing::ContainerEq(actual));
+
+  const auto decoded_events = psy::psycal::Message::FromBuffer(actual.data(), actual.size());
+  ASSERT_EQ(decoded_events.size(), 1);
+
+  EXPECT_THAT(decoded_events[0].GetUnixTimestamp(), 1609502400);
+  EXPECT_THAT(decoded_events[0].GetWords(),
+              ::testing::ContainerEq(std::vector<std::string>{"hi you"}));
 }
