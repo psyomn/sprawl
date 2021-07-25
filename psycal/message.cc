@@ -18,6 +18,7 @@
 #include "message.h"
 
 #include "common/codec.h"
+
 namespace psy::psycal::Message {
   // for now we're dealing with one event per udp packet. ability to
   // pack more in the future but we don't really care about that for
@@ -50,9 +51,10 @@ namespace psy::psycal::Message {
               std::back_inserter(message));
 
     const time_t timestamp = time_t(timestamp_u64);
-    std::tm* tm = localtime(&timestamp);
+    std::tm result = {0};
+    (void) localtime_r(&timestamp, &result);
 
-    return std::vector<Event>{Event(std::move(*tm),
+    return std::vector<Event>{Event(std::move(result),
                                     std::move(std::vector<std::string>{message}))};
   }
 }

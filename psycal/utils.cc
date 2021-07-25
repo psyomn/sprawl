@@ -12,11 +12,11 @@ namespace psy::psycal::Utils {
       std::tm merge = {0};
       (void) localtime_r(&now, &merge);
 
-      tm.tm_year = merge.tm_year;
-      tm.tm_mon = merge.tm_mon;
-      tm.tm_mday = merge.tm_mday;
+      merge.tm_hour = tm.tm_hour;
+      merge.tm_min = tm.tm_min;
+      merge.tm_sec = 0;
 
-      return tm;
+      return merge;
     }
 
     char* try2 = ::strptime(timestamp, "%Y-%m-%dT%Hh%M", &tm);

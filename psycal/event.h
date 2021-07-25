@@ -1,7 +1,7 @@
 #ifndef CACOPHAGY_PSYCAL_PSYCAL_H_
 #define CACOPHAGY_PSYCAL_PSYCAL_H_
 
-#include <ctime>
+#include <chrono>
 #include <string>
 #include <vector>
 

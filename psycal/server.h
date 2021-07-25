@@ -30,12 +30,13 @@ namespace psy::psycal {
   class Server {
   public:
     explicit Server(const std::uint16_t port) :
-      server_(port), events_(sooner_events_), worker_(&Server::Tick, this) {}
+      server_(port), events_(sooner_events_),
+      worker_(&Server::Tick, this), old_({}) {}
 
     void Start();
   private:
     void Save();
-    void Tick();
+    void Tick(); // TODO evaluate use of waitqueue style DS
 
     psy::net::UDPListener server_;
 
@@ -45,8 +46,10 @@ namespace psy::psycal {
     std::priority_queue<Event,
                         std::vector<Event>,
                         decltype(sooner_events_)> events_;
+
     std::thread worker_;
     std::mutex lock_;
+    std::vector<Event> old_;
   };
 }
 

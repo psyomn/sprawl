@@ -66,5 +66,4 @@ TEST(psycal, utils_process_short_timestamp) {
     EXPECT_EQ(el.tm.value().tm_hour, el.expected_hour);
     EXPECT_EQ(el.tm.value().tm_min, el.expected_min);
   }
-
 }

@@ -14,7 +14,6 @@
    limitations under the License.
 */
 #include <iterator>
-#include <stdexcept>
 #include <sstream>
 
 #include <algorithm>
@@ -29,11 +28,10 @@ namespace psy::psycal {
     words_(std::move(words)) {}
 
   std::uint64_t Event::GetUnixTimestamp() const {
-    std::tm copy = tm_;
-    auto ret = mktime(&copy);
-    if (ret == -1) throw std::logic_error("mktime returned error");
-    if (ret < -1) throw std::domain_error("we are not logging things before 1970");
-    return std::uint64_t(ret);
+    namespace sc = std::chrono;
+    std::tm tm_2 = tm_;
+    const time_t event_time = mktime(&tm_2);
+    return static_cast<std::uint64_t>(event_time);
   }
 
   std::vector<std::uint8_t> Event::GetEncodedMessage() const {
