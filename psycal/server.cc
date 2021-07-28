@@ -38,7 +38,16 @@ namespace psy::psycal {
 
         events_.pop();
       }
-
     }
+  }
+
+  void Server::Snapshot() {
+    std::lock_guard guard(lock_);
+
+    events_;
+    old_;
+
+    // clear after storing
+    // std::vector<Event>().swap(old_);
   }
 }

@@ -13,12 +13,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
+#include "common.h"
 #include "filesystem.h"
 
 namespace psy::common::filesystem {
-  MakeDirResult MakeDirP(const std::filesystem::path& path) {
-    return std::filesystem::create_directories(path) ?
-      MakeDirResult::Ok : MakeDirResult::Error;
+  Result MkdirP(const std::filesystem::path& path) {
+    return std::filesystem::create_directories(path) ? Result::Ok : Result::Error;
   }
 
   bool DirExists(const std::filesystem::path& path) {

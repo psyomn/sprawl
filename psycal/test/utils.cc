@@ -37,7 +37,8 @@ TEST(psycal, utils_process_short_timestamp) {
     b = mkts("9h15"),
     c = mkts("21h15"),
     d = mkts("23h33"),
-    e = mkts("3h33");
+    e = mkts("3h33"),
+    f = mkts("4h30");
 
   struct tc {
     std::optional<std::tm> tm;
@@ -51,6 +52,7 @@ TEST(psycal, utils_process_short_timestamp) {
     {c, 21, 15},
     {d, 23, 33},
     {e, 3, 33},
+    {f, 4, 30},
   };
 
   for (const auto& el : tcs) ASSERT_TRUE(el.tm.has_value());

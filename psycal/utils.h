@@ -4,7 +4,10 @@
 
 namespace psy::psycal {
   namespace Utils {
+    const char * const kApplicationName = "psycal";
     std::optional<std::tm> ProcessTimestamp(const char* timestamp);
-    std::optional<std::string> CreateApplicationDirectories();
+
+    enum class CreateAppDirStatus {OkCreate, OkExists, ErrGenConfigPath, Error};
+    CreateAppDirStatus CreateApplicationDirectories();
   }
 }

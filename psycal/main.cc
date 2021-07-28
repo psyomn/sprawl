@@ -22,64 +22,14 @@
 #include <stddef.h>
 #include <unistd.h>
 
-#include "event.h"
 #include "utils.h"
-#include "server.h"
-#include "message.h"
-
-namespace psycal {
-  struct Session {
-    bool foreground_;
-    std::int64_t timestamp_;
-    std::optional<std::tm> maybe_timestamp_;
-    bool server_mode_;
-    std::uint16_t port_;
-    std::string host_;
-
-    void PortStrIntoInt(const char* opt) {
-      std::stringstream ss(opt);
-      ss >> port_;
-    }
-
-    void PrintUsage(const char* name) {
-      std::cout << "usage:" << std::endl
-                << "  " << name  << std::endl
-                << "  -d daemonize" << std::endl
-                << "  -f foreground" << std::endl
-                << "  -s server mode" << std::endl
-                << "  -p port " << std::endl
-                << "  -t add event" << std::endl;
-    }
-
-    void PrintUsageAndExit(const char* name,
-                           int exit_code) {
-      this->PrintUsage(name);
-      exit(exit_code);
-    }
-
-    void StartServer(std::uint16_t port) {
-      psy::psycal::Server server(port);
-      server.Start();
-    }
-
-    void SendEvent(const psy::psycal::Event& event, const Session& session) {
-      namespace pp = psy::psycal;
-      auto buffer = pp::Message::IntoBuffer(std::vector<pp::Event>{event});
-
-      psy::net::UDPClient client(session.host_, session.port_);
-
-      client.Send(buffer.data());
-      if (client.Errored()) {
-        std::cerr << "error sending message" << std::endl;
-      }
-    }
-  };
-}
+#include "session.h"
 
 int main(int argc, char *argv[]) {
-  psy::psycal::Utils::CreateApplicationDirectories();
+  namespace pp = psy::psycal;
+  pp::Utils::CreateApplicationDirectories();
+  pp::Session session;
 
-  psycal::Session session = { .port_ = 9995, .host_ = "127.0.0.1" };
   int opt = 0;
 
   if (argc == 1) {

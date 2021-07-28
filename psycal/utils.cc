@@ -1,6 +1,7 @@
 #include "utils.h"
 
 #include "common/filesystem.h"
+#include "common/xdg.h"
 
 namespace psy::psycal::Utils {
   std::optional<std::tm> ProcessTimestamp(const char* timestamp) {
@@ -25,13 +26,13 @@ namespace psy::psycal::Utils {
     return std::nullopt;
   }
 
-  std::optional<std::string> CreateApplicationDirectories() {
-    std::optional<std::string> ret = std::nullopt;
+  CreateAppDirStatus CreateApplicationDirectories() {
+    const auto app_path = psy::common::XDG::MakeApplicationPath(kApplicationName);
+    if (!app_path) return CreateAppDirStatus::ErrGenConfigPath;
+    if (common::filesystem::DirExists(app_path.value())) return CreateAppDirStatus::OkExists;
 
-    if (!psy::common::filesystem::DirExists("/")) {
-      ret = "creating application directory in ... ";
-    }
+    common::filesystem::MkdirP(app_path.value());
 
-    return ret;
+    return CreateAppDirStatus::OkCreate;
   }
 }

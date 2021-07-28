@@ -15,17 +15,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#ifndef CACOPHAGY_COMMON_FILESYSTEM_H_
-#define CACOPHAGY_COMMON_FILESYSTEM_H_
-
-#include "common.h"
-
-#include <filesystem>
-
-namespace psy::common::filesystem {
-  enum class MakeDirResult { Ok, Error };
-  Result MkdirP(const std::filesystem::path& path);
-  bool DirExists(const std::filesystem::path& path);
+#ifndef CACOPHAGY_COMMON_COMMON_H_
+#define CACOPHAGY_COMMON_COMMON_H_
+namespace psy::common {
+  enum class Result {Ok, Error};
 }
-
 #endif

@@ -34,9 +34,11 @@ namespace psy::psycal {
       worker_(&Server::Tick, this), old_({}) {}
 
     void Start();
+    void MakeDirs() const;
   private:
     void Save();
     void Tick(); // TODO evaluate use of waitqueue style DS
+    void Snapshot();
 
     psy::net::UDPListener server_;
 

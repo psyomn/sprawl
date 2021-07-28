@@ -8,6 +8,7 @@ cc_library(
     ],
     hdrs = [
         "codec.h",
+        "common.h",
         "granulator.h",
         "filesystem.h",
         "xdg.h",

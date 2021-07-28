@@ -13,18 +13,26 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
+#include <unistd.h>
+
 #include "xdg.h"
 
 namespace psy::common::XDG {
   std::optional<std::filesystem::path> GetHomePath() {
-    return std::nullopt;
+    char* home = getenv("HOME");
+    if (home == nullptr) return std::nullopt;
+    return std::string(home);
   }
 
   std::optional<std::filesystem::path> GetConfigPath() {
-    return std::nullopt;
+    auto home_path = GetHomePath();
+    if (!home_path) return std::nullopt;
+    return home_path.value() / std::filesystem::path(".config");
   }
 
   std::optional<std::filesystem::path> MakeApplicationPath(const std::string& name) {
-    return std::nullopt;
+    auto config_path = GetConfigPath();
+    if (!config_path) return std::nullopt;
+    return config_path.value() / std::filesystem::path(name);
   }
 }
