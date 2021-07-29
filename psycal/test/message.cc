@@ -23,8 +23,7 @@ TEST(psycal, message_individual_encode) {
   std::tm tm = {0};
   ASSERT_EQ(strptime("2021-01-01T12h30", "%Y-%m-%dT%H-%m", &tm), nullptr);
 
-  psy::psycal::Event event(std::move(tm),
-                           std::move(std::vector<std::string>{"hi", "you"}));
+  psy::psycal::Event event(std::move(tm), std::move("hi you"));
 
   const std::vector<std::uint8_t> expected = {
     6, 0, 0, 0, 0, 0, 0, 0,
@@ -40,7 +39,7 @@ TEST(psycal, message_into_and_from_buffer) {
   ASSERT_EQ(strptime("2021-01-01T12h30", "%Y-%m-%dT%H-%m", &tm), nullptr);
 
   psy::psycal::Event event(std::move(tm),
-                           std::move(std::vector<std::string>{"hi", "you"}));
+                           std::move(std::string("hi you")));
 
   const std::vector<std::uint8_t> expected = {
     0xc0, 0x0e, 0xef, 0x5f,  0, 0, 0, 0,
@@ -55,6 +54,5 @@ TEST(psycal, message_into_and_from_buffer) {
   ASSERT_EQ(decoded_events.size(), 1);
 
   EXPECT_THAT(decoded_events[0].GetUnixTimestamp(), 1609502400);
-  EXPECT_THAT(decoded_events[0].GetWords(),
-              ::testing::ContainerEq(std::vector<std::string>{"hi you"}));
+  EXPECT_EQ(decoded_events[0].GetMessage(), std::string("hi you"));
 }

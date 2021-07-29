@@ -23,9 +23,9 @@
 #include "common/codec.h"
 
 namespace psy::psycal {
-  Event::Event(std::tm&& tm, std::vector<std::string>&& words) :
+  Event::Event(std::tm&& tm, std::string&& message) :
     tm_(std::move(tm)),
-    words_(std::move(words)) {}
+    message_(std::move(message)) {}
 
   std::uint64_t Event::GetUnixTimestamp() const {
     namespace sc = std::chrono;
@@ -37,28 +37,13 @@ namespace psy::psycal {
   std::vector<std::uint8_t> Event::GetEncodedMessage() const {
     std::vector<std::uint8_t> ret;
 
-    std::size_t each_word_size = 0;
-    std::for_each(words_.begin(), words_.end(),
-                  [&](const std::string& s){ each_word_size += s.size(); });
-
-    const std::size_t size = words_.size() - 1 + each_word_size;
-
+    const std::size_t size = message_.size();
     psy::common::Codec::EncodeU64LE(std::uint64_t(size), ret);
 
-    {
-      auto it = words_.begin();
-      for (; it != words_.end() - 1; ++it) {
-        std::copy(std::begin(*it), std::end(*it), std::back_inserter(ret));
-        ret.push_back(' ');
-      }
-
-      std::copy(std::begin(*it), std::end(*it), std::back_inserter(ret));
-    }
+    std::copy(std::cbegin(message_),
+              std::cend(message_),
+              std::back_inserter(ret));
 
     return ret;
-  }
-
-  const std::vector<std::string>& Event::GetWords() const {
-    return words_;
   }
 }

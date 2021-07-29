@@ -54,7 +54,6 @@ namespace psy::psycal::Message {
     std::tm result = {0};
     (void) localtime_r(&timestamp, &result);
 
-    return std::vector<Event>{Event(std::move(result),
-                                    std::move(std::vector<std::string>{message}))};
+    return std::vector<Event>{Event(std::move(result), std::move(message))};
   }
 }

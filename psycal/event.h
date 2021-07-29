@@ -14,13 +14,13 @@ namespace psy::psycal {
    */
   class Event {
   public:
-    Event(std::tm&&, std::vector<std::string>&&);
+    Event(std::tm&&, std::string&&);
     std::uint64_t GetUnixTimestamp() const;
     std::vector<std::uint8_t> GetEncodedMessage() const;
-    const std::vector<std::string>& GetWords() const;
+    inline const std::string& GetMessage() const { return message_; }
   private:
     std::tm tm_;
-    std::vector<std::string> words_;
+    std::string message_;
   };
 }
 

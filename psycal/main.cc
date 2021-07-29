@@ -82,12 +82,8 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  // TODO: remove this
-  std::vector<std::string> words;
-  for (int i = optind; i < argc; ++i) words.push_back(argv[optind]);
-
   session.SendEvent(psy::psycal::Event(std::move(session.maybe_timestamp_.value()),
-                                       std::move(words)), session);
+                                       std::move(std::string(argv[optind]))), session);
 
   return 0;
 }

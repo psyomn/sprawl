@@ -18,6 +18,7 @@
 
 #include <string>
 #include <cstdint>
+#include <condition_variable>
 #include <queue>
 #include <mutex>
 #include <thread>
@@ -30,8 +31,14 @@ namespace psy::psycal {
   class Server {
   public:
     explicit Server(const std::uint16_t port) :
-      server_(port), events_(sooner_events_),
-      worker_(&Server::Tick, this), old_({}) {}
+      server_(port),
+      events_(sooner_events_),
+      worker_(&Server::Tick, this),
+      worker_snapshot_(&Server::Snapshot, this),
+      old_({}),
+      run_server_(true),
+      snapshot_cv_({}),
+      make_snapshot_(false) {}
 
     void Start();
     void MakeDirs() const;
@@ -50,8 +57,12 @@ namespace psy::psycal {
                         decltype(sooner_events_)> events_;
 
     std::thread worker_;
+    std::thread worker_snapshot_;
     std::mutex lock_;
     std::vector<Event> old_;
+    std::atomic<bool> run_server_;
+    std::condition_variable snapshot_cv_;
+    std::atomic<bool> make_snapshot_;
   };
 }
 
