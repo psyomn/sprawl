@@ -54,10 +54,18 @@ namespace psy::psycal {
 
   void SaveOld(const std::vector<Event>& olds);
   void SaveOld(const std::vector<Event>& olds) {
-    std::ofstream of("data", std::ofstream::binary | std::ofstream::app | std::ofstream::out);
+    std::ofstream of("/tmp/data", std::ofstream::binary | std::ofstream::app | std::ofstream::out);
     for (const auto& el : olds) {
-        of << el.GetUnixTimestamp();
+      const std::uint64_t timestamp = el.GetUnixTimestamp();
+      of.write(reinterpret_cast<const char*>(&timestamp), sizeof(timestamp));
+
+      const std::uint64_t message_size = el.GetMessage().size();
+      of.write(reinterpret_cast<const char*>(&message_size), sizeof(message_size));
+
+      of.write(reinterpret_cast<const char*>(el.GetMessage().data()),
+               static_cast<std::streamsize>(el.GetMessage().size()));
     }
+    of.close();
   }
 
   void Server::Snapshot() {
