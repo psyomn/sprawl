@@ -105,7 +105,7 @@ namespace psy::ds::MD5 {
     u32 A0 = kA0, B0 = kB0, C0 = kC0, D0 = kD0;
 
     u32 a = 0, b = 0, c = 0, d = 0;
-    std::array<uint32_t, 16> x = {0};
+    std::array<u32, 16> x = {0};
 
     for (u32 i = 0; i < padded_size; i += 64) {
       a = A0;
@@ -256,15 +256,15 @@ namespace psy::ds::MD5 {
   void ExtractChunk(const std::vector<std::uint8_t>& message,
                     const size_t from,
                     const size_t to,
-                    std::array<std::uint32_t, 16>& chunk) {
+                    std::array<u32, 16>& chunk) {
     // TODO: reuse common endian encoder here
     size_t count = 0;
     for (size_t i = from; i < to; i += 4, count++) {
       chunk[count] =
         message[i+0]
-        | std::uint32_t(message[i+1]) << 8
-        | std::uint32_t(message[i+2]) << 16
-        | std::uint32_t(message[i+3]) << 24;
+        | u32(message[i+1]) << 8
+        | u32(message[i+2]) << 16
+        | u32(message[i+3]) << 24;
     }
   }
 }
