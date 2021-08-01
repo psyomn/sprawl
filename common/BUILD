@@ -4,6 +4,7 @@ cc_library(
         "codec.cc",
         "granulator.cc",
         "filesystem.cc",
+        "hexdump.cc",
         "xdg.cc",
     ],
     hdrs = [
@@ -11,6 +12,7 @@ cc_library(
         "common.h",
         "granulator.h",
         "filesystem.h",
+        "hexdump.h",
         "xdg.h",
     ],
     includes = [
