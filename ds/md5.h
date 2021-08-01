@@ -18,16 +18,15 @@
 
 #include <array>
 #include <cstdint>
+#include <string>
 #include <vector>
 
-namespace psy::ds {
-  class MD5 {
-  public:
-    static std::array<std::uint32_t, 4> Digest(const std::vector<std::uint8_t>& message);
-    static std::vector<std::uint8_t> PadMessage(const std::vector<std::uint8_t>& message);
-    static void ExtractChunk(const std::vector<std::uint8_t>& v,
-                             size_t from, size_t to, std::array<std::uint32_t, 16>& chunk);
-  };
+namespace psy::ds::MD5 {
+  std::array<std::uint32_t, 4> Digest(const std::vector<std::uint8_t>& message);
+  std::string DigestToString(const std::array<std::uint32_t, 4> digest);
+  std::vector<std::uint8_t> PadMessage(const std::vector<std::uint8_t>& message);
+  void ExtractChunk(const std::vector<std::uint8_t>& v,
+                    size_t from, size_t to, std::array<std::uint32_t, 16>& chunk);
 }
 
 #endif
