@@ -50,9 +50,12 @@ int main(int argc, char* argv[]) {
   static int screen = 0;
   const size_t buff_size = 255;
   char buffer[buff_size];
+  char reminder[] = {'[', 0xe6,0xad,0xa3,0xe7,0xbe,0xa9,']'};
 
   while (1) {
     buffer[0] = 0;
+
+    strcat(buffer, reminder);
 
     for (size_t x = 0; x < engraver_size; ++x)
       engravers[x](buffer, buff_size);
@@ -64,7 +67,7 @@ int main(int argc, char* argv[]) {
     if (!root)
       break;
 
-    XStoreName(display, root, buffer);
+    Xutf8SetWMProperties(display, root, buffer, NULL, NULL, 0, NULL, NULL, NULL);
 
 #ifdef DEBUG
     printf("%s\n", buffer);
