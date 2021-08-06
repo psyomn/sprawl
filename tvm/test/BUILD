@@ -13,5 +13,6 @@ filegroup(
         "data/arithmetic.asm",
         "data/hello-world.asm",
         "data/simple.asm",
+        "data/many-variables.asm",
     ]
 )

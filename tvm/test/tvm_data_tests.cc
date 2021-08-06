@@ -70,6 +70,15 @@ TEST(tvm_data, parse_arithmetic) {
   std::cout << instruction_set << std::endl;
 }
 
-TEST(tvm_data, parse_bad_no_ORIG) {
-  // TODO
+TEST(tvm_data, DISABLED_parse_bad_no_ORIG) {}
+
+TEST(tvm_data, parse_many_variables) {
+  std::filesystem::path file = kFixtures / "many-variables.asm";
+  std::ifstream input(file);
+  if (!input.is_open()) FAIL();
+
+  auto tokens = psy::tvm::Tokenize(input);
+  auto instruction_set = psy::tvm::Parse(tokens);
+
+  std::cout << instruction_set << std::endl;
 }

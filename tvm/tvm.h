@@ -73,17 +73,26 @@ namespace psy::tvm {
 
   struct InstructionSet {
     std::vector<InstructionRow> rows_;
+    std::map<std::string, const Token*> symtab_;
 
     friend std::ostream& operator<<(std::ostream& os, const InstructionSet& iset) {
       size_t address = 0;
+
+      os << "INSTABLE ==========" << std::endl;
       for (const auto& row : iset.rows_)
         os << std::hex << std::setw(4) << std::setfill('0') << 0x10 * address++
            << row << std::endl;
+
+      os << "SYMTAB ============" << std::endl;
+      for (auto it = iset.symtab_.cbegin(); it != iset.symtab_.end(); ++it) {
+        os << it->first << std::endl;
+      }
       return os;
     }
   };
 
   std::vector<Token> Tokenize(std::istream& is);
+  void BuildSymtab(InstructionSet& inset);
   InstructionSet Parse(const std::vector<Token>& tokens);
 }
 #endif

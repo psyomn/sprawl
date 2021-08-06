@@ -140,6 +140,12 @@ namespace psy::tvm {
     return 0;
   }
 
+  void BuildSymtab(InstructionSet& inset) {
+    for (auto& row : inset.rows_)
+      if (row.label_ && row.op_ && row.operands_[0])
+        inset.symtab_[row.label_->value_] = row.label_;
+  }
+
   InstructionSet Parse(const std::vector<Token>& tokens) {
     std::vector<Token>::const_iterator it = tokens.cbegin();
     const std::vector<Token>::const_iterator end = tokens.end();
@@ -155,13 +161,13 @@ namespace psy::tvm {
       parse_segment:
         if (it->value_ == ".END") {
           row.AssignOp(it, end);
-        } else if (it->value_ == ".ORIG") {
-          row.AssignOp(it, end);
-          row.AssignOperand(it, end, 0);
-        } else if (it->value_ == ".STRINGZ") {
+        } else if (it->value_ == ".ORIG" || it->value_ == ".STRINGZ") {
+          // .ORIG ADDRESS
+          // .STRINGZ "value"
           row.AssignOp(it, end);
           row.AssignOperand(it, end, 0);
         } else {
+          // LABEL OP
           row.AssignLabel(it, end);
           row.AssignOperand(it, end, 0);
         }
@@ -190,16 +196,18 @@ namespace psy::tvm {
                    it->value_ == "BRnz" || it->value_ == "BRp" || it->value_ == "BRz" ||
                    it->value_ == "BRnp") {
           // BR LABEL
-          row.AssignOp(it, end);
-          row.AssignOperand(it, end, 0);
+          const int result =
+            row.AssignOp(it, end)
+          | row.AssignOperand(it, end, 0);
         } else if (it->value_ == "LD" || it->value_ == "LEA" || it->value_ == "NOT" ||
                    it->value_ == "ST") {
           // LD DR LABEL
           // ST SR1 LABEL
           // NOT DR SR1
-          row.AssignOp(it, end);
-          row.AssignOperand(it, end, 0);
-          row.AssignOperand(it, end, 1);
+          const int result =
+            row.AssignOp(it, end)
+          | row.AssignOperand(it, end, 0)
+          | row.AssignOperand(it, end, 1);
         }
         break;
       case Token::Type::NumberLiteral:
@@ -214,6 +222,8 @@ namespace psy::tvm {
 
       iset.rows_.push_back(std::move(row));
     }
+
+    BuildSymtab(iset);
 
     return iset;
   }
