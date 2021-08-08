@@ -1,0 +1,83 @@
+/*
+  Copyright 2021 Simon (psyomn) Symeonidis
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+#include "gtest/gtest.h"
+#include "gmock/gmock.h"
+
+#include "tvm/tvm.h"
+
+#include "test.h"
+
+#include <iostream>
+#include <bitset> // debugging
+#include <filesystem>
+#include <fstream>
+
+TEST(tvm, encode_image_arithmetic) {
+  std::filesystem::path file = kFixtures / "arithmetic.asm";
+  std::ifstream input(file);
+  if (!input.is_open()) FAIL();
+
+  auto tokens = psy::tvm::Tokenize(input);
+  auto instruction_set = psy::tvm::Parse(tokens);
+
+  auto img = psy::tvm::Encode(instruction_set);
+
+  const psy::tvm::u16 expected[] = {
+    0b0011000000000000,     /* .ORIG x3000   */
+    0b0001'000'001'0'00010, /* ADD R0 R1 R2  */
+    0b0001'000'001'1'00100, /* ADD R0 R1 #4  */
+    0b0001'000'001'1'11111, /* ADD R0 R1 #-1 */
+    0b1111'000000100101,    /* HALT          */
+  };
+
+  for (size_t i = 0; i < sizeof(expected) / sizeof(expected[0]); ++i)
+    EXPECT_EQ(expected[i], img.data_[i]);
+
+  // DEBUG
+  // for (size_t i = 0; i < img.len_; ++i) {
+  //   std::cout << std::bitset<16>(img.data_[i]) << std::endl;
+  // }
+}
+
+TEST(tvm, encode_image_ands) {
+  std::filesystem::path file = kFixtures / "ands.asm";
+  std::ifstream input(file);
+  if (!input.is_open()) FAIL();
+
+  auto tokens = psy::tvm::Tokenize(input);
+  auto instruction_set = psy::tvm::Parse(tokens);
+
+  auto img = psy::tvm::Encode(instruction_set);
+
+  for (size_t i = 0; i < img.len_; ++i)
+    std::cout << std::bitset<16>(img.data_[i]) << std::endl;
+
+  const psy::tvm::u16 expected[] = {
+    0b0011000000000000,     /* .ORIG x3000  */
+    0b0101'001'010'0'00011, /* AND R1 R2 R3 */
+    0b0101'011'010'0'00001, /* AND R3 R2 R1 */
+    0b0101'001'010'1'00001, /* AND R1 R2 #1 */
+    0b1111'000000100101,    /* HALT         */
+  };
+
+  for (size_t i = 0; i < sizeof(expected) / sizeof(expected[0]); ++i)
+    EXPECT_EQ(expected[i], img.data_[i]);
+
+  // DEBUG
+  // for (size_t i = 0; i < img.len_; ++i) {
+  //   std::cout << std::bitset<16>(img.data_[i]) << std::endl;
+  // }
+}

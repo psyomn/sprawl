@@ -18,13 +18,13 @@
 
 #include "tvm/tvm.h"
 
+#include "test.h"
+
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <string>
 #include <vector>
-
-const std::filesystem::path kFixtures = "tvm/test/data";
 
 TEST(tvm_data, tokenize_simple) {
   std::filesystem::path file = kFixtures / "simple.asm";

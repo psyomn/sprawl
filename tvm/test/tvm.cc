@@ -103,3 +103,17 @@ TEST(tvm, tokenize_string) {
   for (const auto& el : input)
     EXPECT_EQ(Token(std::string(el), 0).type_, Token::Type::String) << el;
 }
+
+TEST(tvm, utils_as_sr1) {
+  EXPECT_EQ(0b0000'000'001'000000, psy::tvm::AsSR1(1));
+  EXPECT_EQ(0b0000'000'010'000000, psy::tvm::AsSR1(2));
+  EXPECT_EQ(0b0000'000'011'000000, psy::tvm::AsSR1(3));
+  EXPECT_EQ(0b0000'000'100'000000, psy::tvm::AsSR1(4));
+}
+
+TEST(tvm, utils_as_dr1) {
+  EXPECT_EQ(0b0000'001'000'000000, psy::tvm::AsDR(1));
+  EXPECT_EQ(0b0000'010'000'000000, psy::tvm::AsDR(2));
+  EXPECT_EQ(0b0000'011'000'000000, psy::tvm::AsDR(3));
+  EXPECT_EQ(0b0000'100'000'000000, psy::tvm::AsDR(4));
+}
