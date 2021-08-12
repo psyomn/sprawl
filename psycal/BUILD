@@ -5,7 +5,7 @@ cc_library(
     linkopts = ["-lpthread"],
     deps = ["//common:psycommon",
             "//net:psynet"],
-    visibility = ["//psycal/test:__pkg__"],
+    visibility = ["//visibility:public"],
 )
 
 cc_binary(

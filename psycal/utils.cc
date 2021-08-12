@@ -26,6 +26,11 @@ namespace psy::psycal::Utils {
     return std::nullopt;
   }
 
+  // purposely fail if environment is nonsensical
+  std::filesystem::path ApplicationPath() {
+    return psy::common::XDG::MakeApplicationPath(kApplicationName).value();
+  }
+
   CreateAppDirStatus CreateApplicationDirectories() {
     const auto app_path = psy::common::XDG::MakeApplicationPath(kApplicationName);
     if (!app_path) return CreateAppDirStatus::ErrGenConfigPath;
@@ -34,5 +39,13 @@ namespace psy::psycal::Utils {
     common::filesystem::MkdirP(app_path.value());
 
     return CreateAppDirStatus::OkCreate;
+  }
+
+  std::filesystem::path HistoryFilePath() {
+    return ApplicationPath() / "history.psycal";
+  }
+
+  std::filesystem::path EventsFilePath() {
+    return ApplicationPath() / "events.psycal";
   }
 }

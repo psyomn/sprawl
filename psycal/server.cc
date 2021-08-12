@@ -13,8 +13,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#include "server.h"
+#include "dump.h"
 #include "message.h"
+#include "server.h"
+#include "utils.h"
 
 #include <fstream>
 #include <locale>
@@ -31,6 +33,11 @@ namespace psy::psycal {
       make_snapshot_ = true;
       snapshot_cv_.notify_one();
     };
+
+    /* load previous run's untriggered events */
+    std::ifstream is(Utils::EventsFilePath(), std::fstream::binary);
+    for (auto& el : ReadEventsFrom(is))
+      events_.push(std::move(el));
 
     server_.ListenWith(listen_fn);
   }
@@ -71,7 +78,9 @@ namespace psy::psycal {
 
   void SaveOld(const std::vector<Event>& olds);
   void SaveOld(const std::vector<Event>& olds) {
-    std::ofstream of("/tmp/history.psycal", std::ofstream::binary | std::ofstream::app | std::ofstream::out);
+    std::ofstream of(
+        Utils::HistoryFilePath(),
+        std::ofstream::binary | std::ofstream::app | std::ofstream::out);
     of.imbue(std::locale::classic());
 
     for (const auto& el : olds) {
@@ -94,7 +103,9 @@ namespace psy::psycal {
   void SaveCurrentEvents(const std::priority_queue<Event,
                          std::vector<Event>,
                          std::function<bool(const Event&, const Event&)> >& events) {
-    std::ofstream of("/tmp/events.psycal", std::ios::binary|std::ios::out);
+    std::ofstream of(
+        Utils::EventsFilePath(),
+        std::ios::binary|std::ios::out);
     of.imbue(std::locale::classic());
 
     /* priority queue doesn't allow for iteration, so I can't quite

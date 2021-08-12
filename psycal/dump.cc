@@ -18,7 +18,7 @@
 #include <cstdint>
 #include <ctime>
 
-namespace psy::psycal {
+namespace psy::psycal /* ::Dump // TODO */ {
   std::vector<Event> ReadEventsFrom(std::istream& is) {
     std::vector<Event> ret;
 
