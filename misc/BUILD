@@ -10,7 +10,8 @@ cc_binary(
     # dwm window status updater
     name = "dsu",
     srcs = ["dsu.c"],
-    linkopts = ["-lX11"]
+    linkopts = ["-lX11"],
+    deps = ["//psycal:psycal"],
 )
 
 cc_binary(

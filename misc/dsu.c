@@ -31,7 +31,6 @@
 const static time_t MU_SLEEP_TIME = 5 * 1000000;
 
 void engrave_date(char *_buffer, size_t _buff_size);
-void engrave_wifi(char *_buffer, size_t _buff_size);
 void engrave_batt(char *_buffer, size_t _buff_size);
 uint16_t convert_battery_reading();
 
@@ -39,7 +38,6 @@ int main(int argc, char* argv[]) {
   (void) argc, (void) argv;
 
   void (*engravers[])(char*, size_t) = {
-    &engrave_wifi,
     &engrave_batt,
     &engrave_date
   };
@@ -48,10 +46,11 @@ int main(int argc, char* argv[]) {
 
   static Display* display = NULL;
   static int screen = 0;
+
   const size_t buff_size = 255;
   char buffer[buff_size];
-  char reminder[] = {'[', 0xe6,0xad,0xa3,0xe7,0xbe,0xa9,']'};
 
+  const char reminder[] = {'[', 0xe6,0xad,0xa3,0xe7,0xbe,0xa9,']', 0x0};
   while (1) {
     buffer[0] = 0;
 
@@ -77,14 +76,13 @@ int main(int argc, char* argv[]) {
     usleep(MU_SLEEP_TIME);
   }
 
-
   return 0;
 }
 
 void engrave_date(char* _buffer, size_t _buff_size) {
   const time_t now = time(NULL);
   const struct tm time = *localtime(&now);
-  const char* date_fmt = "[%02d:%02d][%02d/%02d/%02d]";
+  const char* date_fmt = " %02d:%02d %02d/%02d/%02d";
   char store[32];
 
   sprintf(store, date_fmt,
@@ -94,18 +92,9 @@ void engrave_date(char* _buffer, size_t _buff_size) {
   strncat(_buffer, store, _buff_size);
 }
 
-void engrave_wifi(char* _buffer, size_t _buff_size) {
-  const char* label = "Wifi:";
-  const char* fmt = "[%s%s]";
-  char wifi[16];
-
-  sprintf(wifi, fmt, label, "todo");
-  strncat(_buffer, wifi, _buff_size);
-}
-
 void engrave_batt(char* _buffer, size_t _buff_size) {
   const uint8_t max_batteries = 32;
-  const char* fmt = "[BAT:%03d]";
+  const char* fmt = " BAT:%03d";
   const size_t battery_size = 16;
   char battery[battery_size];
 
@@ -146,7 +135,8 @@ void engrave_batt(char* _buffer, size_t _buff_size) {
   }
 
   snprintf(battery, battery_size,
-           fmt, cumulative_power / bat_count);
+           fmt,
+           cumulative_power / bat_count);
 
   strncat(_buffer, battery, _buff_size);
 }
