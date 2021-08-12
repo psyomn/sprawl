@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  while ((opt = getopt(argc, argv, "pshft:")) != -1) {
+  while ((opt = getopt(argc, argv, "x:pshft:")) != -1) {
     switch (opt) {
     case 'p':
       session.PortStrIntoInt(optarg);
@@ -58,6 +58,9 @@ int main(int argc, char *argv[]) {
     case 'h':
       session.PrintUsageAndExit(argv[0], EXIT_SUCCESS);
       break;
+    case 'x':
+      session.dump_filepath_ = optarg;
+      break;
     default:
       session.PrintUsageAndExit(argv[0], EXIT_FAILURE);
       break;
@@ -68,22 +71,26 @@ int main(int argc, char *argv[]) {
     // TODO: make server return error to have something more
     //   informative here for debugging
     session.StartServer(session.port_);
-    exit(EXIT_SUCCESS);
+    return EXIT_SUCCESS;
+  }
+
+  if (!session.dump_filepath_.empty()) {
+    session.DumpEvents(session.dump_filepath_);
+    return EXIT_SUCCESS;
   }
 
   if (optind >= argc) {
     std::cerr << "expected argument after options" << std::endl;
     session.PrintUsage(argv[0]);
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
 
   if (!session.maybe_timestamp_.has_value()) {
     std::cerr << "invalid timestamp" << std::endl;
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
-
   session.SendEvent(psy::psycal::Event(std::move(session.maybe_timestamp_.value()),
                                        std::move(std::string(argv[optind]))), session);
 
-  return 0;
+  return EXIT_SUCCESS;
 }

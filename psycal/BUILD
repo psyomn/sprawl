@@ -1,7 +1,7 @@
 cc_library(
     name = "psycal",
-    srcs = ["event.cc", "utils.cc", "message.cc", "server.cc", "session.cc"],
-    hdrs = ["event.h", "utils.h", "message.h", "server.h", "session.h"],
+    srcs = ["dump.cc", "event.cc", "utils.cc", "message.cc", "server.cc", "session.cc"],
+    hdrs = ["dump.h", "event.h", "utils.h", "message.h", "server.h", "session.h"],
     linkopts = ["-lpthread"],
     deps = ["//common:psycommon",
             "//net:psynet"],

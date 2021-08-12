@@ -33,7 +33,7 @@ namespace psy::psycal {
     Session() :
       foreground_(false), timestamp_(0),
       maybe_timestamp_(std::nullopt), server_mode_(false),
-      port_(9995), host_("127.0.0.1") { MakeDirs(); }
+      port_(9995), host_("127.0.0.1"), dump_filepath_() { MakeDirs(); }
 
     bool foreground_;
     std::int64_t timestamp_;
@@ -41,6 +41,7 @@ namespace psy::psycal {
     bool server_mode_;
     std::uint16_t port_;
     std::string host_;
+    std::string dump_filepath_;
 
     std::filesystem::path old_events_file_;
     std::filesystem::path upcoming_events_file_;
@@ -50,6 +51,8 @@ namespace psy::psycal {
     void PrintUsageAndExit(const char* name, const int exit_code) const;
     void StartServer(const std::uint16_t port);
     void SendEvent(const psy::psycal::Event& event, const Session& session) const;
+
+    void DumpEvents(std::string path) const;
 
     void MakeDirs() const;
   };
