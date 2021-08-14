@@ -32,7 +32,7 @@ namespace psy::psycal {
   public:
     explicit Server(const std::uint16_t port) :
       server_(port),
-      events_(sooner_events_),
+      events_(Event::SoonerCmp),
       worker_(&Server::Tick, this),
       worker_snapshot_(&Server::Snapshot, this),
       old_({}),
@@ -49,12 +49,7 @@ namespace psy::psycal {
 
     psy::net::UDPListener server_;
 
-    std::function<bool(const Event&, const Event&)> sooner_events_ = [](const Event& a, const Event& b) noexcept -> bool {
-      return a.GetUnixTimestamp() < b.GetUnixTimestamp();
-    };
-    std::priority_queue<Event,
-                        std::vector<Event>,
-                        decltype(sooner_events_)> events_;
+    std::priority_queue<Event, std::vector<Event>, Event::Comparator> events_;
 
     std::thread worker_;
     std::thread worker_snapshot_;

@@ -76,59 +76,6 @@ namespace psy::psycal {
     }
   }
 
-  void SaveOld(const std::vector<Event>& olds);
-  void SaveOld(const std::vector<Event>& olds) {
-    std::ofstream of(
-        Utils::HistoryFilePath(),
-        std::ofstream::binary | std::ofstream::app | std::ofstream::out);
-    of.imbue(std::locale::classic());
-
-    for (const auto& el : olds) {
-      const std::uint64_t timestamp = el.GetUnixTimestamp();
-      of.write(reinterpret_cast<const char*>(&timestamp), sizeof(timestamp));
-
-      const std::uint64_t message_size = el.GetMessage().size();
-      of.write(reinterpret_cast<const char*>(&message_size), sizeof(message_size));
-
-      of.write(reinterpret_cast<const char*>(el.GetMessage().data()),
-               static_cast<std::streamsize>(el.GetMessage().size()));
-    }
-    of.close();
-  }
-
-  void SaveCurrentEvents(const std::priority_queue<Event,
-                         std::vector<Event>,
-                         std::function<bool(const Event&, const Event&)> >& events);
-
-  void SaveCurrentEvents(const std::priority_queue<Event,
-                         std::vector<Event>,
-                         std::function<bool(const Event&, const Event&)> >& events) {
-    std::ofstream of(
-        Utils::EventsFilePath(),
-        std::ios::binary|std::ios::out);
-    of.imbue(std::locale::classic());
-
-    /* priority queue doesn't allow for iteration, so I can't quite
-       dump this directly onto disk. */
-    std::priority_queue<
-      Event,
-      std::vector<Event>,
-      std::function<bool(const Event&, const Event&)> > copy = events;
-
-    while (copy.size() > 0) {
-      auto element = copy.top();
-      const std::uint64_t timestamp = element.GetUnixTimestamp();
-      of.write(reinterpret_cast<const char*>(&timestamp), sizeof(timestamp));
-
-      const size_t message_size = element.GetMessage().size();
-      of.write(reinterpret_cast<const char*>(&message_size), sizeof(message_size));
-      of.write(element.GetMessage().c_str(),
-               static_cast<std::streamsize>(element.GetMessage().size()));
-
-      copy.pop();
-    }
-  }
-
   void Server::Snapshot() {
     while (run_server_) {
       std::unique_lock<std::mutex> lk(lock_);

@@ -9,7 +9,7 @@ cc_test(
 cc_binary(
     # dwm window status updater
     name = "dsu",
-    srcs = ["dsu.c"],
+    srcs = ["dsu.cc"],
     linkopts = ["-lX11"],
     deps = ["//psycal:psycal"],
 )
