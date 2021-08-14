@@ -6,4 +6,4 @@ bazel coverage -s \
   --coverage_report_generator=@bazel_tools//tools/test/CoverageOutputGenerator/java/com/google/devtools/coverageoutputgenerator:Main \
   //...
 
-find ./bazel-out/ -iname "coverage.dat" -print0 | xargs  genhtml -o coverage/
+find ./bazel-out/ -iname "coverage.dat" -print0 | xargs -0 genhtml -o coverage/
