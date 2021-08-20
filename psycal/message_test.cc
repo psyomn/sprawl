@@ -16,8 +16,8 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include "psycal/event.h"
-#include "psycal/message.h"
+#include "event.h"
+#include "message.h"
 
 TEST(psycal, message_individual_encode) {
   std::tm tm = {0};

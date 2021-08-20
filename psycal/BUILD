@@ -14,3 +14,16 @@ cc_binary(
     deps = ["//psycal:psycal",
             "//common:psycommon"],
 )
+
+cc_test(
+    name = "test",
+    srcs = [
+        "message_test.cc",
+        "utils_test.cc",
+        "event_test.cc",
+    ],
+    deps = [
+        "@googletest//:gtest_main",
+        ":psycal",
+    ]
+)
