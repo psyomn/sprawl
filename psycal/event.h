@@ -22,7 +22,7 @@ namespace psy::psycal {
     inline const std::string& GetMessage() const { return message_; }
 
     static bool SoonerCmp(const Event& a, const Event& b) {
-      return a.GetUnixTimestamp() < b.GetUnixTimestamp();
+      return a.GetUnixTimestamp() > b.GetUnixTimestamp();
     };
 
     typedef std::function<bool(const Event&, const Event&)> Comparator;
@@ -30,10 +30,6 @@ namespace psy::psycal {
     std::tm tm_;
     std::string message_;
   };
-
-  // Event::Comparator SoonerEventCmp = [](const Event& a, const Event& b) noexcept -> bool {
-  //   return a.GetUnixTimestamp() < b.GetUnixTimestamp();
-  // };
 }
 
 #endif

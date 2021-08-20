@@ -57,16 +57,18 @@ namespace psy::psycal {
 
       bool popped_event = false;
       while (events_.size() > 0 && now > event_timepoint) {
+        old_.push_back(std::move(events_.top()));
+
+        events_.pop();
+
+        // TODO: libnotify or other hooks can/should be added here
+        popped_event = true;
+
+        // load next timepoint
         event_timepoint =
           sc::system_clock::time_point{
           sc::seconds{events_.top().GetUnixTimestamp()}
         };
-
-        old_.push_back(std::move(events_.top()));
-
-        events_.pop();
-        // TODO: libnotify or other hooks can/should be added here
-        popped_event = true;
       }
 
       if (popped_event) {
