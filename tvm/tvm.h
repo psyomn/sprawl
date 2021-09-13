@@ -72,6 +72,7 @@ namespace psy::tvm {
     std::string TypeString() const;
     u16 HexToU16() const;
     u16 LitValue() const;
+    u16 U16Value() const;
 
     std::string value_;
     size_t line_number_;
@@ -87,19 +88,19 @@ namespace psy::tvm {
       label_(nullptr), op_(nullptr),
       operands_({nullptr}) {}
 
-    inline int AssignLabel(std::vector<Token>::const_iterator& it,
-                           std::vector<Token>::const_iterator end);
+    inline int AssignLabel(std::vector<Token>::iterator& it,
+                           std::vector<Token>::iterator end);
 
-    inline int AssignOp(std::vector<Token>::const_iterator& it,
-                        std::vector<Token>::const_iterator end);
+    inline int AssignOp(std::vector<Token>::iterator& it,
+                        std::vector<Token>::iterator end);
 
-    inline int AssignOperand(std::vector<Token>::const_iterator& it,
-                             std::vector<Token>::const_iterator end,
+    inline int AssignOperand(std::vector<Token>::iterator& it,
+                             std::vector<Token>::iterator end,
                              u8 pos);
 
-    const Token* label_;
-    const Token* op_;
-    const Token* operands_[3];
+    Token* label_;
+    Token* op_;
+    Token* operands_[3];
 
     friend std::ostream& operator<<(std::ostream& os, const InstructionRow& row) {
       auto safe_print_fn = [](const Token* r) noexcept -> std::string {
@@ -129,7 +130,7 @@ namespace psy::tvm {
 
       os << "SYMTAB ============" << std::endl;
       for (auto it = iset.symtab_.cbegin(); it != iset.symtab_.end(); ++it)
-        os << it->first << std::endl;
+        os << it->first << "@" << std::hex << it->second->address_ << std::endl;
 
       return os;
     }
@@ -143,7 +144,7 @@ namespace psy::tvm {
 
   std::vector<Token> Tokenize(std::istream& is);
   void BuildSymtab(InstructionSet& inset);
-  InstructionSet Parse(const std::vector<Token>& tokens);
+  InstructionSet Parse(std::vector<Token>& tokens);
   Image Encode(InstructionSet& inset);
 }
 #endif

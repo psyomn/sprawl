@@ -88,6 +88,38 @@ TEST(tvm, token_instruction) {
 
   for (const auto& el : instructions)
     EXPECT_EQ(Token(std::string(el), 0).type_, Token::Type::Instruction);
+
+  std::vector<Token> tokens;
+  std::for_each(std::begin(instructions),
+                std::end(instructions),
+                [&instructions, &tokens](const std::string& e){
+      tokens.push_back(Token(std::string(e), 0));
+  });
+
+  using psy::tvm::OpCode;
+  const std::vector<OpCode> expected = {
+    OpCode::kAnd,
+    OpCode::kAdd,
+    OpCode::kBr,
+    OpCode::kBrn,
+    OpCode::kBrzp,
+    OpCode::kBrnz,
+    OpCode::kBrp,
+    OpCode::kBrz,
+    OpCode::kBrnp,
+    OpCode::kTrapHalt,
+    OpCode::kLd,
+    OpCode::kLea,
+    OpCode::kLdr,
+    OpCode::kTrapPuts,
+    OpCode::kSt,
+    OpCode::kNot,
+  };
+
+  ASSERT_TRUE(tokens.size() == expected.size());
+
+  for (size_t i = 0; i < tokens.size(); ++i)
+    EXPECT_EQ(tokens[i].opcode_, expected[i]);
 }
 
 TEST(tvm, tokenize_string) {

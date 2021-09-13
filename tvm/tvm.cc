@@ -64,6 +64,8 @@ namespace psy::tvm {
     else if (std::regex_match(value_, kNumberLiteral)) type_ = Type::NumberLiteral;
     else if (std::regex_match(value_, kPunct)) type_ = Type::Punct;
     else if (std::regex_match(value_, kString)) type_ = Type::String;
+
+    if (type_ == Type::Instruction) opcode_ = StringToOpcode(value_);
   }
 
   std::string Token::TypeString() const {
@@ -96,6 +98,14 @@ namespace psy::tvm {
     //   current architecture and we can piggyback on this when encoding
     //   such literals. Might not be the case on others (very unlikely
     //   but still possible)
+    u16 ret = 0;
+    ss >> ret;
+    return ret;
+  }
+
+  u16 Token::U16Value() const {
+    std::stringstream ss;
+    ss << value_;
     u16 ret = 0;
     ss >> ret;
     return ret;
@@ -164,24 +174,24 @@ namespace psy::tvm {
     return tokens;
   }
 
-  int InstructionRow::AssignLabel(std::vector<Token>::const_iterator& it,
-                                  std::vector<Token>::const_iterator end) {
+  int InstructionRow::AssignLabel(std::vector<Token>::iterator& it,
+                                  std::vector<Token>::iterator end) {
     if (it == end) return -1;
     label_ = &*it;
     ++it;
     return 0;
   }
 
-  int InstructionRow::AssignOp(std::vector<Token>::const_iterator& it,
-                               std::vector<Token>::const_iterator end) {
+  int InstructionRow::AssignOp(std::vector<Token>::iterator& it,
+                               std::vector<Token>::iterator end) {
     if (it == end) return -1;
     op_ = &*it;
     ++it;
     return 0;
   }
 
-  int InstructionRow::AssignOperand(std::vector<Token>::const_iterator& it,
-                                    std::vector<Token>::const_iterator end,
+  int InstructionRow::AssignOperand(std::vector<Token>::iterator& it,
+                                    std::vector<Token>::iterator end,
                                     u8 pos) {
     if (it == end) return -1;
     if (pos > 2) return -2;
@@ -193,16 +203,48 @@ namespace psy::tvm {
   }
 
   void BuildSymtab(InstructionSet& inset) {
-    for (auto& row : inset.rows_)
-      if (row.label_ && row.op_ && row.operands_[0])
-        inset.symtab_[row.label_->value_] = row.label_;
+    // build symbtab
+    //
+    // Allow for the following:
+    //
+    // NUMBER  .BLKW 1          (uninitialized integer)
+    // ARRAY   .BLKW 10         (uninitialized array)
+    // STR     .STRINGZ "hello" (null terminated a la C)
+    // MONTHSA .STRINGZ "Jan"
+    //         .STRINGZ "Feb"
+    //         .STRINGZ "Mar"
+    //         .STRINGZ "Apr"
+    //         ...
+    size_t offset = 0;
+    for (auto& row : inset.rows_) {
+      if (row.op_->value_ == ".ORIG") offset = row.operands_[0]->HexToU16();
+      if (!(row.label_ && row.op_ && row.operands_[0])) {
+        offset += 2;
+        continue;
+      }
+
+      std::cout << std::hex << offset << std::endl;
+
+      // variables should be huddled up together at the bottom of the assembly
+      row.label_->address_ = offset;
+      inset.symtab_[row.label_->value_] = row.label_;
+      if (row.op_->value_ == ".STRINGZ"){
+        offset += row.operands_[0]->value_.size();
+      } else if (row.op_->value_ == ".BLKW") {
+        std::cout << "try to do the lit value" << std::endl;
+        std::cout << row.operands_[0]->U16Value() << std::endl;
+        offset += row.operands_[0]->U16Value();
+      }
+    }
   }
 
-  InstructionSet Parse(const std::vector<Token>& tokens) {
-    std::vector<Token>::const_iterator it = tokens.cbegin();
-    const std::vector<Token>::const_iterator end = tokens.end();
+  InstructionSet Parse(std::vector<Token>& tokens) {
+    std::vector<Token>::iterator it = tokens.begin();
+    std::vector<Token>::iterator end = tokens.end();
 
     InstructionSet iset;
+
+    // TODO: use opcode_ instead of string matches here
 
     // All programs must begin with .ORIG x????
     while (it != tokens.end()) {
@@ -213,7 +255,8 @@ namespace psy::tvm {
       parse_segment:
         if (it->value_ == ".END") {
           row.AssignOp(it, end);
-        } else if (it->value_ == ".ORIG" || it->value_ == ".STRINGZ") {
+        } else if (it->value_ == ".ORIG" || it->value_ == ".STRINGZ" ||
+                   it->value_ == ".BLKW") {
           // .ORIG ADDRESS
           // .STRINGZ "value"
           row.AssignOp(it, end);
@@ -281,8 +324,6 @@ namespace psy::tvm {
   }
 
   Image Encode(InstructionSet& inset) {
-    u16 image[0xffff] = {0};
-    size_t pos = 0;
     Image img;
 
     for (auto const& row : inset.rows_) {
