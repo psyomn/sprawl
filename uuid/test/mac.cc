@@ -1,9 +1,9 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "rfc4122-uuid/common.h"
-#include "rfc4122-uuid/mac.h"
-#include "rfc4122-uuid/uuid.h"
+#include "uuid/common.h"
+#include "uuid/mac.h"
+#include "uuid/uuid.h"
 
 #include <cstdint>
 

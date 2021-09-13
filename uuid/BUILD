@@ -1,5 +1,5 @@
 cc_library(
-    name = "psy-uuid",
+    name = "uuid",
     srcs = [
         "clock.cc",
         "uuid.cc",

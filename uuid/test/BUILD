@@ -1,8 +1,8 @@
 cc_test(
-    name = "uuid_test",
+    name = "test",
     srcs = glob(["**/*.cc"]),
     deps = [
-         "//rfc4122-uuid:psy-uuid",
+         "//uuid:uuid",
          "@googletest//:gtest_main"
     ]
 )

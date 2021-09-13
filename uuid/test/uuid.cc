@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include "rfc4122-uuid/uuid.h"
+#include "uuid/uuid.h"
 
 #include <memory>
 
