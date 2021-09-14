@@ -15,12 +15,59 @@
  */
 
 #include "parser.h"
+#include "state.h"
 
 namespace psy::bk {
-  void Parser::Parse() {
-    for (auto& e : modules_) Parser::ParseModule(e);
+  Parser::Parser(std::vector<Token>& tokens) :
+    tokens_(tokens), transitions_() {
+      {
+        /* header 1 definition */
+        Token t1 = Token("#", 0, 0);
+        t1.type_ = Token::Type::kHeader1;
+
+        Token t2 = Token("##", 0, 0);
+        t2.type_ = Token::Type::kHeader2;
+
+        Token t3 = Token("###", 0, 0);
+        t3.type_ = Token::Type::kHeader3;
+      }
+
+      {
+        /* list definition */
+      }
+
+      /* code block definition */
   }
 
-  void Parser::ParseModule(Module& module) {
+  /**
+   * Mark nodes that start on a new line.
+   *
+   * Arguably we could add this in the lexer, but it might be simpler/cleaner
+   * here.
+   */
+  void Parser::MarkNewlineTokens() {
+    bool found_newline = false;
+    bool first_token = true;
+
+    for (auto& tok : tokens_) {
+      if (first_token) {
+        tok.is_first_on_newline_ = true;
+        first_token = false;
+        continue;
+      }
+
+      if (tok.type_ == Token::Type::kNewline) {
+        found_newline = true;
+        continue;
+      }
+
+      if (found_newline) {
+        tok.is_first_on_newline_ = true;
+        found_newline = false;
+      }
+    }
+  }
+
+  void Parser::Parse() {
   }
 }

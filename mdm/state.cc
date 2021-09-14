@@ -16,9 +16,11 @@
 #include "state.h"
 
 namespace psy::bk {
-  State::State(Token tok, bool terminal) :
+  State::State(Token tok, bool terminal, bool wildcard) :
     token_(tok),
-    terminal_(terminal) {}
+    terminal_(terminal),
+    wildcard_(wildcard) {
+  }
 
   State::~State() {}
 }

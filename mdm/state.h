@@ -20,10 +20,11 @@
 namespace psy::bk {
   class State {
   public:
-    State(Token tok, bool terminal);
+    State(Token tok, bool terminal, bool wildcard);
     ~State();
   private:
     Token token_;
     bool terminal_;
+    bool wildcard_;
   };
 }

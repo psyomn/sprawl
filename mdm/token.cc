@@ -23,7 +23,8 @@ namespace psy::bk {
       std::size_t line,
       std::size_t column) :
     type_(Type::kUnknown), token_(value),
-    line_number_(line), column_(column) {}
+    line_number_(line), column_(column),
+    is_first_on_newline_(false) {}
 
   Token::~Token() {}
 

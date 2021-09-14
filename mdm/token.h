@@ -47,7 +47,8 @@ namespace psy::bk {
     std::string token_;
     std::size_t line_number_;
     std::size_t column_;
+    bool is_first_on_newline_;
 
     friend std ::ostream& operator<<(std::ostream&, const bk::Token&);
   };
-} // namespace bk
+}

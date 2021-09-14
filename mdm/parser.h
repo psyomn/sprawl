@@ -15,17 +15,20 @@
  */
 #pragma once
 
-#include "module.h"
+#include "state.h"
 
 #include <vector>
+#include <map>
 
 namespace psy::bk {
   struct Parser {
   public:
-    Parser(std::vector<Module>& modules) : modules_(modules) {}
+    Parser(std::vector<Token>& tokens);
+    void MarkNewlineTokens();
+
     void Parse();
-    void ParseModule(Module&);
   private:
-    std::vector<Module>& modules_;
+    std::vector<Token>& tokens_;
+    std::map<State, State> transitions_;
   };
 }

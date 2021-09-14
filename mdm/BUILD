@@ -44,7 +44,8 @@ filegroup(
 cc_test(
     name = "test",
     srcs = [
-        "lexer_test.cc"
+        "lexer_test.cc",
+        "parser_test.cc",
     ],
     deps = [
       ":mdm",

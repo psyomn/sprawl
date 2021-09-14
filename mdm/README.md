@@ -24,8 +24,6 @@ This tool will:
 - give you the possibility to bind many documents together to form some sort of
   "book" (eventually).
 
-BK is a implementation of MD--.
-
 ## Considerations
 
 I'm thinking about also implementing:
