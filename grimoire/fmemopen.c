@@ -13,9 +13,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
+#include <unistd.h>
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
 #define HANDLE_ERROR(msg) do { perror(msg); return EXIT_FAILURE; } while(0);
@@ -23,12 +26,12 @@
 int main(void) {
   printf("simple usage of fmemopen\n");
 
-  const uint8_t contents[] = {
+  uint8_t contents[] = {
     0xca, 0xfe, 0xd0, 0x0d,
     0x01, 0x02, 0x03, 0x04,
   };
 
-  FILE* fd = fmemopen((void*)contents,
+  FILE* fd = fmemopen(&contents[0],
                       ARRAY_SIZE(contents),
                       "rb");
 
