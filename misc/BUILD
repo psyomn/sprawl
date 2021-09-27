@@ -37,3 +37,8 @@ cc_binary(
         "//common:psycommon"
     ]
 )
+
+cc_binary(
+    name = "socktk",
+    srcs = ["socktk.c"],
+)
