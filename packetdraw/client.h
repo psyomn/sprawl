@@ -13,4 +13,26 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
+#ifndef _CACOPHAGY_PACKETDRAW_CLIENT_H
+#define _CACOPHAGY_PACKETDRAW_CLIENT_H
+
+#include <stdint.h>
+
 #include "message.h"
+
+struct client {
+  char host[256];
+  enum packetdraw_msgtype type;
+  uint16_t port;
+  uint32_t x;
+  uint32_t y;
+  uint32_t w;
+  uint32_t h;
+  uint8_t r;
+  uint8_t g;
+  uint8_t b;
+};
+
+int packetdraw_client_send_message(struct client *client);
+
+#endif

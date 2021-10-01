@@ -3,6 +3,9 @@
 
 #include <SDL2/SDL.h>
 
+#include "message.h"
+#include "server.h"
+
 struct packetdraw_win {
   SDL_Window *window;
   SDL_Surface *surface;
@@ -11,6 +14,7 @@ struct packetdraw_win {
 
 int packetdraw_graphics_init(struct packetdraw_win *win);
 int packetdraw_graphics_free(struct packetdraw_win *win);
-int packetdraw_graphics_render(struct packetdraw_win *win);
+int packetdraw_graphics_render(struct packetdraw_win *win,
+                               struct packetdraw_server *srv);
 
 #endif
