@@ -11,6 +11,8 @@ Need C++20.
 
 This code base uses exceptions.
 
+This code is also not meant to be portable.
+
 ```nocode
 bazel build ...
 bazel test ...
@@ -24,6 +26,7 @@ bazel test ...
 - [ds](./ds): data structures for fun.
 - [fttl](./fttl): file time to live. Simple proof of concept of a
   service to expire files after a while.
+- [gamejam](./gamejam): a collection of common reusable code for gamejams.
 - [grimoire](./grimoire): a collection of system calls (linux), small
   experiments that I can quickly go over and remind myself of the existence of
   them.
@@ -40,6 +43,5 @@ bazel test ...
   least once!).
 - [psycal](./psycal): a simple calendar tool that I use with `dwm`. lightweight
   desktop notifications.
-- [rfc4122-uuid](./rfc4122-uuid): implementation: mainly for fun
 - [tinydb](./tinydb): a naive implementation of a relational database (WIP).
 - [tvm](./tvm): a tiny virtual machine, which is an implementation on LC3.
