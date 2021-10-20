@@ -61,6 +61,8 @@ namespace psy::gamejam {
     size_t width_;
     size_t height_;
     std::string path_to_tileset_;
+    size_t tileset_width_;
+    size_t tileset_height_;
   };
 }
 

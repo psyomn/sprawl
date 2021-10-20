@@ -35,7 +35,7 @@ namespace psy::gamejam {
       if (mis.peek() == '\n' || mis.peek() == EOF) return std::nullopt;
 
       std::stringstream buff;
-      while ((c = mis.get()) != '\n' && c != EOF)
+      while (mis.peek() != ':' && (c = mis.get()) != '\n' && c != EOF)
         buff << c;
 
       size_t temp_i = 0;
@@ -78,6 +78,14 @@ again:
       goto again;
     case 't':
       {
+        std::optional<size_t> maybe_x = parse_int_fn(is);
+        if (!maybe_x) return ParseStatus::kError;
+        tileset_width_ = maybe_x.value();
+
+        std::optional<size_t> maybe_y = parse_int_fn(is);
+        if (!maybe_y) return ParseStatus::kError;
+        tileset_height_ = maybe_y.value();
+
         std::optional<std::string> maybe_str = parse_str_fn(is);
         if (!maybe_str) return ParseStatus::kError;
         path_to_tileset_ = maybe_str.value();

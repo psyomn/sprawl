@@ -51,7 +51,7 @@ TEST(gamejam, parse_metadata) {
   std::stringstream ss(
     "x:11\n"
     "y:22\n"
-    "t:/path/to/tilemap.png\n"
+    "t:32:23:/path/to/tilemap.png\n"
     "\n"
   );
 
@@ -65,13 +65,16 @@ TEST(gamejam, parse_metadata) {
   EXPECT_EQ(builder.width_, 11);
   EXPECT_EQ(builder.height_, 22);
   EXPECT_EQ(builder.path_to_tileset_, "/path/to/tilemap.png");
+
+  EXPECT_EQ(builder.tileset_width_, 32);
+  EXPECT_EQ(builder.tileset_height_, 23);
 }
 
 TEST(gamejam, level_from_text) {
   std::stringstream ss(
     "x:26\n"
     "y:7\n"
-    "t:/path/to/tilemap.png\n"
+    "t:8:9:/path/to/tilemap.png\n"
     "\n"
     "                          \n"
     "                          \n"
@@ -93,5 +96,8 @@ TEST(gamejam, level_from_text) {
   EXPECT_EQ(val.Width(), 26);
   EXPECT_EQ(val.Height(), 7);
   EXPECT_EQ(val.TilesetPath(), "/path/to/tilemap.png");
+
+  EXPECT_EQ(builder.tileset_width_, 8);
+  EXPECT_EQ(builder.tileset_height_, 9);
 }
 
