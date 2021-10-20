@@ -1,5 +1,5 @@
-#ifndef CACOPHAGY_PSYCAL_DUMP_H_
-#define CACOPHAGY_PSYCAL_DUMP_H_
+#ifndef SPRAWL_PSYCAL_DUMP_H_
+#define SPRAWL_PSYCAL_DUMP_H_
 #include <fstream>
 #include <vector>
 #include <queue>

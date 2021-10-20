@@ -13,8 +13,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#ifndef CACOPHAGY_PSYCAL_SERVER_H_
-#define CACOPHAGY_PSYCAL_SERVER_H_
+#ifndef SPRAWL_PSYCAL_SERVER_H_
+#define SPRAWL_PSYCAL_SERVER_H_
 
 #include <string>
 #include <cstdint>
@@ -61,4 +61,4 @@ namespace psy::psycal {
   };
 }
 
-#endif /* CACOPHAGY_PSYCAL_SERVER_H_ */
+#endif /* SPRAWL_PSYCAL_SERVER_H_ */

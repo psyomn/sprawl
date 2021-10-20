@@ -13,8 +13,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#ifndef CACOPHAGY_RFC4122_UUID_H_
-#define CACOPHAGY_RFC4122_UUID_H_
+#ifndef SPRAWL_RFC4122_UUID_H_
+#define SPRAWL_RFC4122_UUID_H_
 
 #include "common.h"
 #include "clock.h"
@@ -76,4 +76,4 @@ namespace psy::uuid {
   };
 }
 
-#endif /* CACOPHAGY_RFC4122_UUID_H_ */
+#endif /* SPRAWL_RFC4122_UUID_H_ */

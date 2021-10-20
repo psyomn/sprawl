@@ -13,8 +13,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#ifndef CACOPHAGY_DS_HASHES_H_
-#define CACOPHAGY_DS_HASHES_H_
+#ifndef SPRAWL_DS_HASHES_H_
+#define SPRAWL_DS_HASHES_H_
 
 #include <cstdint>
 #include <vector>
@@ -32,4 +32,4 @@ namespace psy::ds {
   std::uint64_t fletcher64(const std::vector<std::byte>& bytes) noexcept;
 }
 
-#endif /* CACOPHAGY_DS_HASHES_H_ */
+#endif /* SPRAWL_DS_HASHES_H_ */

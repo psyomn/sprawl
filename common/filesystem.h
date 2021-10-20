@@ -15,8 +15,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#ifndef CACOPHAGY_COMMON_FILESYSTEM_H_
-#define CACOPHAGY_COMMON_FILESYSTEM_H_
+#ifndef SPRAWL_COMMON_FILESYSTEM_H_
+#define SPRAWL_COMMON_FILESYSTEM_H_
 
 #include "common.h"
 

@@ -13,8 +13,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#ifndef CACOPHAGY_RFC4122_COMMON_H_
-#define CACOPHAGY_RFC4122_COMMON_H_
+#ifndef SPRAWL_RFC4122_COMMON_H_
+#define SPRAWL_RFC4122_COMMON_H_
 
 namespace psy::uuid {
     enum class RunType { kProduction, kTesting };

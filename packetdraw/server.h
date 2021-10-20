@@ -13,8 +13,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#ifndef _CACOPHAGY_PACKETDRAW_SERVER_H
-#define _CACOPHAGY_PACKETDRAW_SERVER_H
+#ifndef _SPRAWL_PACKETDRAW_SERVER_H
+#define _SPRAWL_PACKETDRAW_SERVER_H
 
 #include <stddef.h>
 #include <stdint.h>

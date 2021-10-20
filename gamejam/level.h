@@ -13,8 +13,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#ifndef _CACOPHAGY_GAMEJAM_LEVEL
-#define _CACOPHAGY_GAMEJAM_LEVEL
+#ifndef _SPRAWL_GAMEJAM_LEVEL
+#define _SPRAWL_GAMEJAM_LEVEL
 
 #include <optional>
 #include <vector>

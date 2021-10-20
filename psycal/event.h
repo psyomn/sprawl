@@ -1,5 +1,5 @@
-#ifndef CACOPHAGY_PSYCAL_EVENT_H_
-#define CACOPHAGY_PSYCAL_EVENT_H_
+#ifndef SPRAWL_PSYCAL_EVENT_H_
+#define SPRAWL_PSYCAL_EVENT_H_
 
 #include <chrono>
 #include <functional>

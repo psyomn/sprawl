@@ -15,8 +15,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#ifndef CACOPHAGY_COMMON_COMMON_H_
-#define CACOPHAGY_COMMON_COMMON_H_
+#ifndef SPRAWL_COMMON_COMMON_H_
+#define SPRAWL_COMMON_COMMON_H_
 namespace psy::common {
   enum class Result {Ok, Error};
 }

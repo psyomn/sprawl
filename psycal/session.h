@@ -13,8 +13,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#ifndef CACOPHAGY_PSYCAL_SESSION_H_
-#define CACOPHAGY_PSYCAL_SESSION_H_
+#ifndef SPRAWL_PSYCAL_SESSION_H_
+#define SPRAWL_PSYCAL_SESSION_H_
 
 #include <filesystem>
 #include <iostream>
@@ -57,4 +57,4 @@ namespace psy::psycal {
     void MakeDirs() const;
   };
 }
-#endif /* CACOPHAGY_PSYCAL_SESSION_H_ */
+#endif /* SPRAWL_PSYCAL_SESSION_H_ */

@@ -17,8 +17,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#ifndef CACOPHAGY_PSYCAL_H_
-#define CACOPHAGY_PSYCAL_H_
+#ifndef SPRAWL_PSYCAL_H_
+#define SPRAWL_PSYCAL_H_
 
 #include <cstdint>
 #include <cstring>

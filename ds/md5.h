@@ -13,8 +13,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#ifndef CACOPHAGY_DS_MD5_H_
-#define CACOPHAGY_DS_MD5_H_
+#ifndef SPRAWL_DS_MD5_H_
+#define SPRAWL_DS_MD5_H_
 
 #include <array>
 #include <cstdint>
