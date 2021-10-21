@@ -17,6 +17,7 @@
 #include "gmock/gmock.h"
 
 #include "level.h"
+#include "level_builder.h"
 
 #include <iostream>
 #include <sstream>

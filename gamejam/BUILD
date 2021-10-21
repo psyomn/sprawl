@@ -3,11 +3,13 @@ cc_library(
     srcs = [
         "colshape.cc",
         "level.cc",
+        "level_builder.cc",
     ],
 
     hdrs = [
         "colshape.h",
         "level.h",
+        "level_builder.h",
     ],
 )
 
