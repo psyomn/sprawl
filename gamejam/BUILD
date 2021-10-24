@@ -14,6 +14,7 @@ cc_library(
         "tile.h",
         "utils.h",
     ],
+    visibility = ["//visibility:public"],
 )
 
 cc_test(
