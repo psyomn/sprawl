@@ -18,6 +18,7 @@
 
 #include "level.h"
 #include "level_builder.h"
+#include "tile.h"
 
 #include <iostream>
 #include <sstream>
@@ -51,9 +52,21 @@ TEST(gamejam, bad_leveldata_format) {
 TEST(gamejam, parse_metadata) {
   std::stringstream ss(
     "x:11\n"
-    "y:22\n"
+    "y:10\n"
     "t:32:23:/path/to/tilemap.png\n"
     "\n"
+    "\n"
+    "\n"
+    "###########\n"
+    "###########\n"
+    "###########\n"
+    "###########\n"
+    "###########\n"
+    "###########\n"
+    "###########\n"
+    "###########\n"
+    "###########\n"
+    "###########\n"
   );
 
   namespace pg = psy::gamejam;
@@ -64,7 +77,7 @@ TEST(gamejam, parse_metadata) {
   ASSERT_EQ(pg::LevelBuilder::ParseStatus::kSuccess, result);
 
   EXPECT_EQ(builder.width_, 11);
-  EXPECT_EQ(builder.height_, 22);
+  EXPECT_EQ(builder.height_, 10);
   EXPECT_EQ(builder.path_to_tileset_, "/path/to/tilemap.png");
 
   EXPECT_EQ(builder.tileset_width_, 32);
@@ -73,9 +86,11 @@ TEST(gamejam, parse_metadata) {
 
 TEST(gamejam, level_from_text) {
   std::stringstream ss(
-    "x:26\n"
+    "x:27\n"
     "y:7\n"
     "t:8:9:/path/to/tilemap.png\n"
+    "\n"
+    "\n"
     "\n"
     "                          \n"
     "                          \n"
@@ -94,11 +109,47 @@ TEST(gamejam, level_from_text) {
   ASSERT_TRUE(result.has_value());
   auto val = result.value();
 
-  EXPECT_EQ(val.Width(), 26);
+  EXPECT_EQ(val.Width(), 27);
   EXPECT_EQ(val.Height(), 7);
   EXPECT_EQ(val.TilesetPath(), "/path/to/tilemap.png");
 
   EXPECT_EQ(builder.tileset_width_, 8);
   EXPECT_EQ(builder.tileset_height_, 9);
+}
+
+TEST(gamejam, build_simple_level_test) {
+  namespace pg = psy::gamejam;
+  auto builder = pg::LevelBuilder();
+
+  std::stringstream ss(
+    "x:5\n"
+    "y:5\n"
+    "t:8:8:/path/to/tilemap.png\n"
+    "\n"
+    "\n"
+    "\n"
+    "#.   \n"
+    " .   \n"
+    "  .  \n"
+    "     \n"
+    "    #\n"
+  );
+
+  const auto result = builder.FromText(ss);
+  ASSERT_TRUE(result.has_value());
+
+  auto level = result.value();
+  const auto tiles = level.GetTiles();
+  EXPECT_TRUE(tiles.size() > 0);
+  EXPECT_EQ(tiles.size(), 25);
+
+  EXPECT_EQ(tiles[0].index_, 1);
+  EXPECT_EQ(tiles[1].index_, 2);
+  EXPECT_EQ(tiles[2].index_, 0);
+
+  EXPECT_EQ(level.At(0, 0).index_, 1);
+  EXPECT_EQ(level.At(1, 1).index_, 2);
+  EXPECT_EQ(level.At(2, 2).index_, 2);
+  EXPECT_EQ(level.At(4, 4).index_, 1);
 }
 

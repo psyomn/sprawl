@@ -13,19 +13,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#ifndef _SPRAWL_GAMEJAM_LEVEL
-#define _SPRAWL_GAMEJAM_LEVEL
+#ifndef _SPRAWL_GAMEJAM_LEVEL_H
+#define _SPRAWL_GAMEJAM_LEVEL_H
 
 #include <vector>
 #include <istream>
 
-namespace psy::gamejam {
-  class Tile {
-  public:
-    size_t x;
-    size_t y;
-  };
+#include "tile.h"
 
+namespace psy::gamejam {
   class Level {
   public:
     Level(
@@ -37,13 +33,15 @@ namespace psy::gamejam {
     inline size_t Width() const { return width_; }
     inline size_t Height() const { return height_; }
     std::string TilesetPath() const { return path_to_tileset_; }
+    inline const std::vector<Tile>& GetTiles() const { return tiles_; }
+    /* you're trusted not to supply bogus here */
+    inline const Tile& At(size_t x, size_t y) const { return tiles_[width_ * y + x]; }
   private:
     std::vector<Tile> tiles_;
     size_t width_;
     size_t height_;
     std::string path_to_tileset_;
   };
-
 }
 
 #endif

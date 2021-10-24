@@ -17,8 +17,10 @@
 #define _SPRAWL_GAMEJAM_LEVEL_BUILDER_H
 
 #include <optional>
+#include <vector>
 
 #include "level.h"
+#include "tile.h"
 
 namespace psy::gamejam {
   /**
@@ -39,6 +41,8 @@ namespace psy::gamejam {
     std::string path_to_tileset_;
     size_t tileset_width_;
     size_t tileset_height_;
+
+    std::vector<Tile> tiles_;
   };
 }
 #endif
