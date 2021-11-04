@@ -37,39 +37,45 @@ namespace psy::bk {
       stream << "id(";
       break;
     case Token::Type::kWord:
-      stream << "word(";
+      stream << "w(";
       break;
     case Token::Type::kSymbol:
-      stream << "symb(";
+      stream << "s(";
       break;
     case Token::Type::kPunct:
-      stream << "punct(";
+      stream << "p(";
       break;
     case Token::Type::kNewline:
-      stream << "newline(";
+      stream << "n(";
       break;
     case Token::Type::kCodeDelimiter:
-      stream << "code-delim(";
+      stream << "code(";
       break;
     case Token::Type::kWhitespace:
       abort(); // TODO
       break;
     case Token::Type::kHeader1:
-      stream << "header1(";
+      stream << "h1(";
       break;
     case Token::Type::kHeader2:
-      stream << "header2(";
+      stream << "h2(";
       break;
     case Token::Type::kHeader3:
-      stream << "header3(";
+      stream << "h3(";
       break;
     default:
       abort();
     }
 
-    return stream
+    stream
       << tok.token_
       << ":" << tok.line_number_
       << ":" << tok.column_ << ")";
+
+    /* add a newline to make debug output more readble on newlines */
+    if (tok.type_ == Token::Type::kNewline)
+      stream << std::endl;
+
+    return stream;
   }
 }
