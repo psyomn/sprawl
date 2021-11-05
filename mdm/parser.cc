@@ -1,5 +1,5 @@
 /*
-   Copyright 2019 Simon (psyomn) Symeonidis
+   Copyright 2019-2021 Simon (psyomn) Symeonidis
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -69,5 +69,19 @@ namespace psy::bk {
   }
 
   void Parser::Parse() {
+  }
+
+  /**
+   * Once the parser is done processing, you can output to a stream the results.
+   */
+  void Parser::Write(std::ostream& stream) const {
+    for (auto e : tokens_) {
+      // TODO: eventually I should detect whitespace and tokenize it
+      // (unfortunately), and some of the bellow exceptions will be removed.
+      stream << e.token_;
+
+      if (e.type_ == Token::Type::kNewline) continue;
+      stream << " ";
+    }
   }
 }

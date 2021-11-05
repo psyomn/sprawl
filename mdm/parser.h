@@ -1,5 +1,5 @@
 /*
-   Copyright 2019 Simon (psyomn) Symeonidis
+   Copyright 2019-2021 Simon (psyomn) Symeonidis
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 
 #include <vector>
 #include <map>
+#include <ostream>
 
 namespace psy::bk {
   struct Parser {
@@ -27,6 +28,8 @@ namespace psy::bk {
     void MarkNewlineTokens();
 
     void Parse();
+
+    void Write(std::ostream& stream) const;
   private:
     std::vector<Token>& tokens_;
     std::map<State, State> transitions_;

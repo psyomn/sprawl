@@ -71,7 +71,7 @@ namespace psy::bk {
 
       if (IsNewline(c)) {
         ++linecount;
-        Token tok("", linecount, colcount);
+        Token tok("\n", linecount, colcount);
         tok.type_ = Token::Type::kNewline;
         tokens.push_back(tok);
 

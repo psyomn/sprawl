@@ -80,5 +80,11 @@ TEST(bk, parse_first_on_newline) {
 
     EXPECT_FALSE(tokens[i].is_first_on_newline_);
   }
+
+  {
+    std::stringstream output;
+    parser.Write(output);
+    std::cout << output.str() << std::endl;
+  }
 }
 

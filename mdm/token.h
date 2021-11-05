@@ -31,9 +31,9 @@ namespace psy::bk {
     };
 
     Token(
-        const std::string& value,
-        std::size_t line,
-        std::size_t column);
+      const std::string& value,
+      std::size_t line,
+      std::size_t column);
 
     ~Token();
 
@@ -49,6 +49,6 @@ namespace psy::bk {
     std::size_t column_;
     bool is_first_on_newline_;
 
-    friend std ::ostream& operator<<(std::ostream&, const bk::Token&);
+    friend std::ostream& operator<<(std::ostream&, const Token&);
   };
 }
