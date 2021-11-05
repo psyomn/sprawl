@@ -10,9 +10,10 @@ cc_library(
     hdrs = [
         "codec.h",
         "common.h",
-        "granulator.h",
         "filesystem.h",
+        "granulator.h",
         "hexdump.h",
+        "intrinsics.h",
         "xdg.h",
     ],
     includes = [

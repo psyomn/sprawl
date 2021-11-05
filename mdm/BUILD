@@ -12,7 +12,6 @@ cc_library(
     ],
     hdrs = [
       "error.h",
-      "intrinsics.h",
       "lexer.h",
       "module.h",
       "parser.h",
