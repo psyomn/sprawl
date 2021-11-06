@@ -5,7 +5,7 @@ cc_binary(
         "render_tilemap_example.cc",
     ],
 
-    linkopts=["-lSDL2", "-lSDL2_image", "-lpthread"],
+    linkopts = ["-lSDL2", "-lSDL2_image", "-lpthread"],
 
     deps = [
         "//gamejam:gamejam"

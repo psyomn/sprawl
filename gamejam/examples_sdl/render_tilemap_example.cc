@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <exception>
+#include <memory>
 #include <vector>
 
 #include <cstddef>
@@ -31,31 +32,36 @@
 
 #include "gamejam/tile.h"
 
-#define SPRAWL_FL __FILE__ ":" "__LINE__"
-
 /**
  * Load a texture as a tilemap.  Depends on SDL.
  */
 class Tilemap {
 public:
-  Tilemap(std::string texture_path, SDL_Renderer *renderer) :
-    renderer_(renderer) ,
+  int img_init_ret_;
+  std::string texture_path_;
+  SDL_Renderer *renderer_;
+  SDL_Surface *surface_;
+  SDL_Texture *texture_;
+
+  Tilemap(const std::string& texture_path, SDL_Renderer *renderer) :
+    img_init_ret_(IMG_Init(IMG_INIT_PNG)),
     texture_path_(texture_path),
+    renderer_(renderer),
     surface_(IMG_Load(texture_path_.c_str())),
-    texture_(SDL_CreateTextureFromSurface(renderer_, surface_)) {
-    if (surface_ == nullptr) throw std::runtime_error(SPRAWL_FL " could not load the surface, at path: " + texture_path_);
-    if (texture_ == nullptr) throw std::runtime_error(SPRAWL_FL " could not create the texture");
+    texture_(SDL_CreateTextureFromSurface(renderer_, surface_))
+  {
+    if (renderer_ == nullptr) throw std::runtime_error(" you must supply a renderer");
+    if (surface_ == nullptr) throw std::runtime_error(" could not load the surface, at path: " + texture_path_);
+    if (texture_ == nullptr) throw std::runtime_error(" could not create the texture");
+
+    SDL_FreeSurface(surface_);
+    surface_ = nullptr;
   }
 
   ~Tilemap() {
-    SDL_DestroyTexture(texture_);
-    SDL_FreeSurface(surface_);
+    std::cout << "FFUUUCK" << std::endl;
+    if (texture_) SDL_DestroyTexture(texture_);
   }
-private:
-  SDL_Renderer *renderer_;
-  std::string texture_path_;
-  SDL_Surface *surface_;
-  SDL_Texture *texture_;
 };
 
 class Entity {
@@ -71,14 +77,13 @@ private:
 class Graphics {
 public:
   Graphics(
-      std::string title,
-      std::size_t w,
-      std::size_t h) :
+    std::string title, std::size_t w, std::size_t h) :
     title_(title), window_width_(w), window_height_(h),
-    window_(nullptr), surface_(nullptr), renderer_(nullptr),
-    img_flags_(IMG_INIT_PNG) {
-    if (SDL_Init(SDL_INIT_VIDEO) == -1)
-      throw std::runtime_error("could not init video");
+    window_(nullptr), renderer_(nullptr),
+    tilemaps_(std::vector<std::unique_ptr<Tilemap>>{})
+  {
+    if (SDL_Init(SDL_INIT_EVERYTHING) == -1)
+      throw std::runtime_error("could not init sdl_init_everything");
 
     window_ = SDL_CreateWindow(
         title.c_str(),
@@ -109,7 +114,10 @@ public:
     return renderer_;
   }
 
-  void AddTilemap(Tilemap&& tilemap) { tilemaps_.push_back(std::move(tilemap)); }
+  void AddTilemap(const std::string& path) {
+    auto tm = std::make_unique<Tilemap>(path, renderer_);
+    tilemaps_.push_back(std::move(tm));
+  }
 
   void RenderLoop() {
     bool alive = true;
@@ -119,13 +127,47 @@ public:
     tile_00.index_ = 0;
     tile_01.index_ = 1;
 
+    SDL_Rect position = {
+      .x = 32*0, .y = 0,
+      .w = 32, .h = 32,
+    };
+
+    SDL_Rect position2 = {
+      .x = 32*1, .y = 0,
+      .w = 32, .h = 32,
+    };
+
+    SDL_Rect position3 = {
+      .x = 32*2, .y = 0,
+      .w = 32, .h = 32,
+    };
+
+
+
+    SDL_Rect dest = {
+      .x = 0, .y = 0,
+      .w = 32, .h = 32,
+    };
+
+    SDL_Rect dest2 = {
+      .x = 32, .y = 0,
+      .w = 32, .h = 32,
+    };
+
+    SDL_Rect dest3 = {
+      .x = 64, .y = 0,
+      .w = 32, .h = 32,
+    };
+
     while (alive) {
       while (SDL_PollEvent(&e) != 0)
-       if (e.type == SDL_QUIT) alive = 0;
+        if (e.type == SDL_QUIT) alive = 0;
 
-      // SDL_BlitSurface(winow_->surface, NULL, window_->surface, NULL);
-      SDL_UpdateWindowSurface(window_);
+      SDL_RenderCopy(renderer_, tilemaps_[0]->texture_, &dest, &position);
+      SDL_RenderCopy(renderer_, tilemaps_[1]->texture_, &dest, &position2);
+
       SDL_RenderPresent(renderer_);
+      SDL_Delay(500);
     }
   }
 private:
@@ -134,24 +176,14 @@ private:
   std::size_t window_height_;
 
   SDL_Window* window_;
-  SDL_Surface* surface_;
   SDL_Renderer* renderer_;
 
-  /** default to png for now */
-  int img_flags_;
-
-  std::vector<Tilemap> tilemaps_;
+  std::vector<std::unique_ptr<Tilemap>> tilemaps_;
 };
 
 int main(int argc, char *argv[]) {
   (void) argc;
   (void) argv;
-
-  const std::string asset_paths[] = {
-    "gamejam/examples_sdl/assets/Autumn_Ground_32x32.png",
-    "gamejam/examples_sdl/assets/Summer_Ground_32x32.png",
-  };
-
   constexpr std::size_t window_height = 240;
   constexpr std::size_t window_width = 256;
 
@@ -161,12 +193,13 @@ int main(int argc, char *argv[]) {
       window_height
   );
 
-  Tilemap
-    tilemap_autumn(asset_paths[0], graphics.GetRendererPtr()),
-    tilemap_summer(asset_paths[1], graphics.GetRendererPtr());
+  graphics.AddTilemap(
+    "gamejam/examples_sdl/assets/Autumn_Ground_32x32.png"
+  );
 
-  graphics.AddTilemap(std::move(tilemap_autumn));
-  graphics.AddTilemap(std::move(tilemap_summer));
+  graphics.AddTilemap(
+    "gamejam/examples_sdl/assets/Summer_Ground_32x32.png"
+  );
 
   graphics.RenderLoop();
 
