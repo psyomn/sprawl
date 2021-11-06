@@ -13,7 +13,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-#pragma once
+#ifndef _SPRAWL_MDM_ERROR_H
+#define _SPRAWL_MDM_ERROR_H
 
 #include <string>
 
@@ -23,3 +24,5 @@ struct Error {
   const std::string& message_;
 };
 }
+
+#endif

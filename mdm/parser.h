@@ -27,7 +27,7 @@ namespace psy::bk {
     Parser(std::vector<Token>& tokens);
     void MarkNewlineTokens();
 
-    void Parse();
+    void ProcessRules();
 
     void Write(std::ostream& stream) const;
   private:

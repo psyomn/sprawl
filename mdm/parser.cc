@@ -68,8 +68,11 @@ namespace psy::bk {
     }
   }
 
-  void Parser::Parse() {
-  }
+  /**
+   * Logic specific to prunning or other stuff should go here.  So right now,
+   * it's not exactly parsing per se, but could be in the future.
+   */
+  void Parser::ProcessRules() {}
 
   /**
    * Once the parser is done processing, you can output to a stream the results.

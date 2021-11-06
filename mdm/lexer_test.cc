@@ -24,6 +24,8 @@
 
 using namespace psy::bk;
 
+constexpr bool print_enabled = false;
+
 /* you can use this if you need to debug:
  * Lexer::PrintTokenList(tokens);
  */
@@ -100,8 +102,7 @@ TEST(bk, lex_headers) {
 
   Lexer lex(ss);
   const auto tokens = lex.Process();
-
-  Lexer::PrintTokenList(tokens);
+  if (print_enabled) Lexer::PrintTokenList(tokens);
 }
 
 TEST(bk, lex_bad_headers) {
@@ -113,7 +114,7 @@ TEST(bk, lex_bad_headers) {
 
   Lexer lex(ss);
   const auto tokens = lex.Process();
-  Lexer::PrintTokenList(tokens);
+  if (print_enabled) Lexer::PrintTokenList(tokens);
 }
 
 TEST(bk, file_lex_codeblock) {
